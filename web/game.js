@@ -1,25 +1,13 @@
-// game.js
-// Unified script to drive both the practice stage and the timed trials.
-
-// This script handles two distinct pages:
-//  1. practice.html — unlimited practice with assigned feedback; provides a
-//     button to proceed to the timed trials.
-//  2. game.html — conducts three timed trials of 60 seconds each using
-//     predetermined target sequences (via a linear congruential generator).
-
-document.addEventListener('DOMContentLoaded', function() {
-  // Verify that participant info and assigned mode exist
+document.addEventListener('DOMContentLoaded', function () {
   const firstName = sessionStorage.getItem('first_name');
   const lastName = sessionStorage.getItem('last_name');
   const assignedMode = sessionStorage.getItem('assigned_mode');
+
   if (!firstName || !lastName || !assignedMode) {
-    // If missing information, return to start
     window.location.href = 'index.html';
     return;
   }
 
-  // Determine if this is the practice page or the trial page by checking for
-  // special elements in the DOM
   const practiceOverlay = document.getElementById('practice-overlay');
   if (practiceOverlay) {
     setupPracticePage();
@@ -27,34 +15,39 @@ document.addEventListener('DOMContentLoaded', function() {
     setupTrialPage();
   }
 
-  // ---------------------- Practice Page Logic -----------------------
   function setupPracticePage() {
     const beginBtn = document.getElementById('begin-practice-btn');
-    const resultOverlay = document.getElementById('result-overlay');
-    const startTrialsBtn = document.getElementById('start-trials-btn');
+    const finishPracticeBtn = document.getElementById('finish-practice-btn');
     const gameContainer = document.getElementById('game-container');
     const circle = document.getElementById('circle');
     const flashOverlay = document.getElementById('flash-overlay');
     const audioHit = document.getElementById('audio-hit');
     const audioMiss = document.getElementById('audio-miss');
+    const practiceOverlayEl = document.getElementById('practice-overlay');
 
-    // Game state
+    let practiceStarted = false;
     let targetPos = { x: 0, y: 0 };
-    const RADIUS = 20; // radius in px (40px diameter)
-    const MARGIN = 100; // margin from edges (approx 1 inch)
 
-    // RNG: simple built‑in Math.random for practice
+    const RADIUS = 20;
+    const MARGIN = 100;
+
     function randomPos() {
-      const containerW = gameContainer.clientWidth;
-      const containerH = gameContainer.clientHeight;
-      const rx = Math.random();
-      const ry = Math.random();
-      const px = rx * (containerW - 2 * (RADIUS + MARGIN)) + (RADIUS + MARGIN);
-      const py = ry * (containerH - 2 * (RADIUS + MARGIN)) + (RADIUS + MARGIN);
+      const rect = gameContainer.getBoundingClientRect();
+      const containerW = rect.width;
+      const containerH = rect.height;
+
+      const usableW = Math.max(2 * RADIUS + 20, containerW - 2 * (RADIUS + MARGIN));
+      const usableH = Math.max(2 * RADIUS + 20, containerH - 2 * (RADIUS + MARGIN));
+
+      const leftPad = (containerW - usableW) / 2;
+      const topPad = (containerH - usableH) / 2;
+
+      const px = Math.random() * usableW + leftPad;
+      const py = Math.random() * usableH + topPad;
+
       return { x: px, y: py };
     }
 
-    // Spawn a new target
     function spawnTarget() {
       const pos = randomPos();
       targetPos = pos;
@@ -63,22 +56,41 @@ document.addEventListener('DOMContentLoaded', function() {
       circle.style.display = 'block';
     }
 
-    // Click handler for practice
+    function flash(type) {
+      flashOverlay.classList.remove('success', 'error');
+      flashOverlay.style.display = 'block';
+
+      if (type === 'success') {
+        flashOverlay.classList.add('success');
+      } else {
+        flashOverlay.classList.add('error');
+      }
+
+      setTimeout(() => {
+        flashOverlay.style.display = 'none';
+        flashOverlay.classList.remove('success', 'error');
+      }, 100);
+    }
+
     function handleClick(event) {
-      // If click is outside the practice area, ignore
+      if (!practiceStarted) return;
       if (event.target.closest('#practice-overlay')) return;
-      if (!circle.style.display || circle.style.display === 'none') return;
-      const clickX = event.clientX;
-      const clickY = event.clientY;
+      if (event.target.closest('#finish-practice-btn')) return;
+      if (circle.style.display === 'none') return;
+
+      const rect = gameContainer.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const clickY = event.clientY - rect.top;
+
       const dx = clickX - targetPos.x;
       const dy = clickY - targetPos.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
+
       if (dist <= RADIUS) {
-        // hit
         if (assignedMode === 'auditory') {
           audioHit.currentTime = 0;
           try { audioHit.play(); } catch (e) {}
-        } else if (assignedMode === 'visual') {
+        } else {
           flash('success');
         }
         spawnTarget();
@@ -86,46 +98,32 @@ document.addEventListener('DOMContentLoaded', function() {
         if (assignedMode === 'auditory') {
           audioMiss.currentTime = 0;
           try { audioMiss.play(); } catch (e) {}
-        } else if (assignedMode === 'visual') {
+        } else {
           flash('error');
         }
-        // miss: keep same target
       }
     }
 
-    function flash(type) {
-      flashOverlay.classList.remove('success', 'error');
-      flashOverlay.style.display = 'block';
-      if (type === 'success') flashOverlay.classList.add('success');
-      else flashOverlay.classList.add('error');
-      setTimeout(() => {
-        flashOverlay.style.display = 'none';
-        flashOverlay.classList.remove('success', 'error');
-      }, 100);
-    }
-
-    // Begin practice when user clicks button
-    beginBtn.addEventListener('click', function() {
-      practiceOverlay.style.display = 'none';
-      resultOverlay.classList.remove('hidden');
-      resultOverlay.style.display = 'flex';
-      // spawn first target
+    beginBtn.addEventListener('click', function () {
+      practiceStarted = true;
+      if (practiceOverlayEl) {
+        practiceOverlayEl.style.display = 'none';
+      }
+      finishPracticeBtn.disabled = false;
       spawnTarget();
     });
 
-    // Start trials button navigates to first timed trial
-    startTrialsBtn.addEventListener('click', function() {
+    finishPracticeBtn.addEventListener('click', function () {
       window.location.href = 'game.html?trial=1';
     });
 
-    // Listen for clicks on the practice game container
     gameContainer.addEventListener('click', handleClick);
   }
 
-  // ---------------------- Trial Page Logic -------------------------
   function setupTrialPage() {
     const urlParams = new URLSearchParams(window.location.search);
-    const trialNumber = parseInt(urlParams.get('trial')) || 1;
+    const trialNumber = parseInt(urlParams.get('trial'), 10) || 1;
+
     const gameContainer = document.getElementById('game-container');
     const circle = document.getElementById('circle');
     const flashOverlay = document.getElementById('flash-overlay');
@@ -136,32 +134,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const audioHit = document.getElementById('audio-hit');
     const audioMiss = document.getElementById('audio-miss');
     const trialDisplay = document.getElementById('trial-number-display');
-    if (trialDisplay) trialDisplay.textContent = trialNumber;
+
+    if (trialDisplay) {
+      trialDisplay.textContent = trialNumber;
+    }
 
     const RADIUS = 20;
     const MARGIN = 100;
-    const TRIAL_MS = 60000; // 60 seconds
+    const TRIAL_MS = 60000;
 
-    // Seeds for each trial to generate deterministic sequences
     const seedMap = { 1: 12345, 2: 67890, 3: 24680 };
     const seedVal = seedMap[trialNumber] || 1;
 
-    // Linear congruential generator
     function makeLCG(seed) {
       const m = 0x100000000;
       const a = 1664525;
       const c = 1013904223;
       let state = seed >>> 0;
-      return function() {
+      return function () {
         state = (a * state + c) % m;
         return state / m;
       };
     }
+
     const randomFn = makeLCG(seedVal);
 
-    // State
-    let trialStarted = false;
-    let trialEnded = false;
+    let phase = 'start'; // start, countdown, running, ended
     let countdownTimer = null;
     let endTimer = null;
     let targetPos = { x: 0, y: 0 };
@@ -171,30 +169,59 @@ document.addEventListener('DOMContentLoaded', function() {
     let events = [];
     let startTime = 0;
 
-    // Show start overlay click to begin
-    gameContainer.addEventListener('click', function handleStartClick() {
-      if (trialStarted) return;
-      trialStarted = true;
-      startOverlay.style.display = 'none';
-      // Start 3 second countdown
-      let count = 3;
-      countdownEl.textContent = count;
-      countdownEl.classList.remove('hidden');
-      countdownTimer = setInterval(() => {
-        count--;
-        if (count > 0) {
-          countdownEl.textContent = count;
-        } else {
-          clearInterval(countdownTimer);
-          countdownEl.classList.add('hidden');
-          beginTrial();
-        }
-      }, 1000);
-      // Remove this listener so additional clicks don't restart
-      gameContainer.removeEventListener('click', handleStartClick);
-    });
+    if (resultOverlay) {
+      resultOverlay.classList.add('hidden');
+      resultOverlay.style.display = '';
+    }
+    if (countdownEl) {
+      countdownEl.classList.add('hidden');
+      countdownEl.textContent = '';
+    }
+    circle.style.display = 'none';
+
+    function randomPos() {
+      const rect = gameContainer.getBoundingClientRect();
+      const containerW = rect.width;
+      const containerH = rect.height;
+
+      const usableW = Math.max(2 * RADIUS + 20, containerW - 2 * (RADIUS + MARGIN));
+      const usableH = Math.max(2 * RADIUS + 20, containerH - 2 * (RADIUS + MARGIN));
+
+      const leftPad = (containerW - usableW) / 2;
+      const topPad = (containerH - usableH) / 2;
+
+      const px = randomFn() * usableW + leftPad;
+      const py = randomFn() * usableH + topPad;
+
+      return { x: px, y: py };
+    }
+
+    function spawnTarget() {
+      const pos = randomPos();
+      targetPos = pos;
+      circle.style.left = (pos.x - RADIUS) + 'px';
+      circle.style.top = (pos.y - RADIUS) + 'px';
+      circle.style.display = 'block';
+    }
+
+    function flash(type) {
+      flashOverlay.classList.remove('success', 'error');
+      flashOverlay.style.display = 'block';
+
+      if (type === 'success') {
+        flashOverlay.classList.add('success');
+      } else {
+        flashOverlay.classList.add('error');
+      }
+
+      setTimeout(() => {
+        flashOverlay.style.display = 'none';
+        flashOverlay.classList.remove('success', 'error');
+      }, 100);
+    }
 
     function beginTrial() {
+      phase = 'running';
       hits = 0;
       misses = 0;
       totalShots = 0;
@@ -204,52 +231,73 @@ document.addEventListener('DOMContentLoaded', function() {
       endTimer = setTimeout(endTrial, TRIAL_MS);
     }
 
-    function spawnTarget() {
-      const containerW = gameContainer.clientWidth;
-      const containerH = gameContainer.clientHeight;
-      const rx = randomFn();
-      const ry = randomFn();
-      const px = rx * (containerW - 2 * (RADIUS + MARGIN)) + (RADIUS + MARGIN);
-      const py = ry * (containerH - 2 * (RADIUS + MARGIN)) + (RADIUS + MARGIN);
-      targetPos = { x: px, y: py };
-      circle.style.left = (px - RADIUS) + 'px';
-      circle.style.top = (py - RADIUS) + 'px';
-      circle.style.display = 'block';
+    function handleTrialStart(event) {
+      if (phase !== 'start') return;
+      if (event.target.closest('#result-overlay')) return;
+
+      phase = 'countdown';
+      if (startOverlay) {
+        startOverlay.style.display = 'none';
+      }
+
+      let count = 5;
+      countdownEl.textContent = count;
+      countdownEl.classList.remove('hidden');
+
+      countdownTimer = setInterval(() => {
+        count -= 1;
+        if (count > 0) {
+          countdownEl.textContent = count;
+        } else {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+          countdownEl.classList.add('hidden');
+          countdownEl.textContent = '';
+          beginTrial();
+        }
+      }, 1000);
     }
 
     function handleClick(event) {
-      if (!trialStarted || trialEnded) return;
-      // ignore clicks on overlay elements
-      if (event.target.closest('#result-overlay') || event.target.closest('#start-overlay')) return;
-      const clickX = event.clientX;
-      const clickY = event.clientY;
+      if (phase !== 'running') return;
+      if (event.target.closest('#result-overlay')) return;
+      if (event.target.closest('#start-overlay')) return;
+      if (circle.style.display === 'none') return;
+
+      const rect = gameContainer.getBoundingClientRect();
+      const clickX = event.clientX - rect.left;
+      const clickY = event.clientY - rect.top;
+
       const dx = clickX - targetPos.x;
       const dy = clickY - targetPos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      // compute time relative to trial start
       const clickTime = ((performance.now() - startTime) / 1000).toFixed(3);
+
       let status;
       if (distance <= RADIUS) {
         status = 'hit';
         hits++;
+
         if (assignedMode === 'auditory') {
           audioHit.currentTime = 0;
           try { audioHit.play(); } catch (e) {}
-        } else if (assignedMode === 'visual') {
+        } else {
           flash('success');
         }
+
         spawnTarget();
       } else {
         status = 'miss';
         misses++;
+
         if (assignedMode === 'auditory') {
           audioMiss.currentTime = 0;
           try { audioMiss.play(); } catch (e) {}
-        } else if (assignedMode === 'visual') {
+        } else {
           flash('error');
         }
-        // keep same target on miss
       }
+
       totalShots++;
       events.push({
         time: clickTime,
@@ -261,30 +309,22 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    function flash(type) {
-      flashOverlay.classList.remove('success', 'error');
-      flashOverlay.style.display = 'block';
-      if (type === 'success') flashOverlay.classList.add('success');
-      else flashOverlay.classList.add('error');
-      setTimeout(() => {
-        flashOverlay.style.display = 'none';
-        flashOverlay.classList.remove('success', 'error');
-      }, 100);
-    }
-
     function endTrial() {
-      if (trialEnded) return;
-      trialEnded = true;
+      if (phase === 'ended') return;
+
+      phase = 'ended';
       clearTimeout(endTimer);
+      clearInterval(countdownTimer);
       circle.style.display = 'none';
+
       const accuracy = totalShots > 0 ? (hits / totalShots * 100).toFixed(1) : '0.0';
+
       if (resultOverlay) {
         resultText.innerHTML = `Hits: ${hits}<br>Misses: ${misses}<br>Accuracy: ${accuracy}%`;
         resultOverlay.classList.remove('hidden');
-        resultOverlay.style.display = 'flex';
       }
+
       sendResults().then(() => {
-        // Wait a few seconds, then proceed to next trial or survey
         setTimeout(() => {
           if (trialNumber < 3) {
             window.location.href = `game.html?trial=${trialNumber + 1}`;
@@ -303,6 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
         attempt: String(trialNumber),
         events: events
       };
+
       try {
         await fetch('/submit', {
           method: 'POST',
@@ -314,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
-    // Event listeners
+    gameContainer.addEventListener('click', handleTrialStart, { once: true });
     gameContainer.addEventListener('click', handleClick);
   }
 });
