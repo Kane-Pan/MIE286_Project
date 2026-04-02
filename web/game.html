@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aim Training Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- The target circle -->
+        <div id="circle" style="display:none;"></div>
+
+        <!-- Start overlay instructing the user to click to begin -->
+        <div id="start-overlay">Click to start</div>
+
+        <!-- Countdown numbers appear here -->
+        <div id="countdown" style="display:none;"></div>
+
+        <!-- Flash overlay for green/red feedback -->
+        <div id="flash-overlay"></div>
+
+        <!-- Pause overlay (ESC) -->
+        <div id="pause-overlay" style="display:none;">
+            <div class="pause-modal" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+                <h2 id="pause-title">Paused</h2>
+                <p class="pause-subtext">Press <b>Esc</b> to resume, or choose an option below.</p>
+                <div class="pause-actions">
+                    <button id="pause-resume" class="btn" type="button">Resume</button>
+                    <button id="pause-restart" class="btn" type="button">Restart</button>
+                    <a id="pause-exit-menu" class="btn practice-btn" href="index.html">Exit to Menu</a>
+                    <!-- Removed the shutdown button; participants should not be able to terminate the server -->
+                </div>
+                <p id="pause-status" class="pause-status" aria-live="polite"></p>
+            </div>
+        </div>
+
+        <!-- Result overlay shown after the game ends -->
+        <div id="result-overlay">
+            <h2>Trial Complete</h2>
+            <p id="result-text"></p>
+            <a href="#" id="retry-btn" class="btn">Retry</a>
+            <a href="index.html" class="btn practice-btn">Return to Menu</a>
+        </div>
+    </div>
+
+    <!-- Audio elements for auditory feedback -->
+    <audio id="audio-hit" src="ding.wav"></audio>
+    <audio id="audio-miss" src="buzz.wav"></audio>
+
+    <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback Experiment</title>
+  <link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+  <main id="menu" class="menu-container" role="main">
+    <section aria-labelledby="title">
+      <h1 id="title">Feedback Experiment</h1>
+      <p>Select feedback type for the main experiment or practice the task.</p>
+
+      <div class="button-group" role="group" aria-label="Select feedback type">
+        <a href="select_attempt.html?mode=auditory" class="btn" role="button">Auditory Feedback</a>
+        <a href="select_attempt.html?mode=visual" class="btn" role="button">Visual Feedback</a>
+      </div>
+
+      <div class="button-group" role="group" aria-label="Practice">
+        <a href="game.html?mode=practice&attempt=practice" class="btn practice-btn" role="button">
+          Practice (random)
+        </a>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>

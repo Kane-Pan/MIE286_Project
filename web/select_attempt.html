@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Attempt</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="attempt-container" class="menu-container" role="main">
+    <section aria-labelledby="attempt-title">
+      <h1 id="attempt-title">Select Attempt</h1>
+      <p>
+        Each participant performs two 60-second attempts using the same target positions.
+        Choose which attempt to run.
+      </p>
+
+      <div class="button-group" role="group" aria-label="Select attempt">
+        <a id="btn-attempt1" class="btn" href="#" role="button">Attempt 1</a>
+        <a id="btn-attempt2" class="btn" href="#" role="button">Attempt 2</a>
+      </div>
+
+      <div class="button-group" role="group" aria-label="Navigation">
+        <a href="index.html" class="btn practice-btn" role="button">Back to Menu</a>
+      </div>
+    </section>
+
+    <script>
+      // When the page loads, read the 'mode' query parameter and update links
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const mode = params.get('mode') || 'practice';
+        document.getElementById('btn-attempt1').href = `game.html?mode=${mode}&attempt=1`;
+        document.getElementById('btn-attempt2').href = `game.html?mode=${mode}&attempt=2`;
+      })();
+    </script>
+  </main>
+</body>
+</html>
