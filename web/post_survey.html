@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post‑Experiment Survey</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>Post‑Experiment Questionnaire</h1>
+    <p>Thank you for completing the trials. Please answer a few final questions.</p>
+    <form id="post-survey-form">
+      <!-- Helpfulness -->
+      <div class="question-block">
+        <p>1. Which type of feedback did you find more helpful for improving your performance?</p>
+        <div class="survey-options">
+          <label><input type="radio" name="helpful" value="auditory" required> Auditory</label>
+          <label><input type="radio" name="helpful" value="visual"> Visual</label>
+          <label><input type="radio" name="helpful" value="both"> Both equally</label>
+          <label><input type="radio" name="helpful" value="neither"> Neither</label>
+        </div>
+      </div>
+      <!-- Distracting -->
+      <div class="question-block">
+        <p>2. Which type of feedback did you find more distracting?</p>
+        <div class="survey-options">
+          <label><input type="radio" name="distracting" value="auditory" required> Auditory</label>
+          <label><input type="radio" name="distracting" value="visual"> Visual</label>
+          <label><input type="radio" name="distracting" value="both"> Both equally</label>
+          <label><input type="radio" name="distracting" value="none"> None</label>
+        </div>
+      </div>
+      <!-- Preference -->
+      <div class="question-block">
+        <p>3. If you had a choice, which feedback would you prefer to use?</p>
+        <div class="survey-options">
+          <label><input type="radio" name="preference" value="auditory" required> Auditory</label>
+          <label><input type="radio" name="preference" value="visual"> Visual</label>
+          <label><input type="radio" name="preference" value="no_preference"> No preference</label>
+        </div>
+      </div>
+      <!-- Comments -->
+      <div class="question-block">
+        <label for="comments">4. Do you have any comments or suggestions about this experiment? (Optional)</label>
+        <textarea id="comments" name="comments" placeholder="Your feedback..."></textarea>
+      </div>
+      <button type="submit" class="btn">Submit Responses</button>
+    </form>
+  </main>
+  <script src="post_survey.js"></script>
+</body>
+</html>

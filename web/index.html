@@ -2,29 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Feedback Experiment</title>
-  <link rel="stylesheet" href="styles.css?v=1">
+  <title>Feedback Experiment – Welcome</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main id="menu" class="menu-container" role="main">
-    <section aria-labelledby="title">
-      <h1 id="title">Feedback Experiment</h1>
-      <p>Select feedback type for the main experiment or practice the task.</p>
+  <main>
+    <h1>Welcome to the Feedback Experiment</h1>
+    <p>
+      Thank you for volunteering for this study. You will complete a short
+      reaction-time task where you click on targets that appear on the
+      screen. The task involves different types of feedback (auditory or
+      visual) that will be assigned randomly. You will first answer a few
+      background questions, practice the task, complete three 60&nbsp;second
+      trials, and finish with a brief questionnaire.
+    </p>
+    <p>
+      Your responses and performance will be recorded anonymously. You may
+      withdraw at any time without penalty. By checking the box below and
+      entering your name, you indicate that you have read and understood the
+      information and consent to participate.
+    </p>
 
-      <div class="button-group" role="group" aria-label="Select feedback type">
-        <a href="select_attempt.html?mode=auditory" class="btn" role="button">Auditory Feedback</a>
-        <a href="select_attempt.html?mode=visual" class="btn" role="button">Visual Feedback</a>
+    <form id="consent-form">
+      <div class="form-group">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required>
       </div>
-
-      <div class="button-group" role="group" aria-label="Practice">
-        <a href="game.html?mode=practice&attempt=practice" class="btn practice-btn" role="button">
-          Practice (random)
-        </a>
+      <div class="form-group">
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required>
       </div>
-    </section>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="consentBox" required>
+          I have read the information above and consent to participate.
+        </label>
+      </div>
+      <button type="submit" class="btn">Start Survey</button>
+    </form>
   </main>
 
+  <script>
+    // Handle consent form submission: store name and proceed to survey
+    document.getElementById('consent-form').addEventListener('submit', function(ev) {
+      ev.preventDefault();
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const consent = document.getElementById('consentBox').checked;
+      if (!firstName || !lastName || !consent) {
+        alert('Please enter your name and provide consent to continue.');
+        return;
+      }
+      // Store participant info in sessionStorage
+      sessionStorage.setItem('first_name', firstName);
+      sessionStorage.setItem('last_name', lastName);
+      // Navigate to survey page
+      window.location.href = 'survey.html';
+    });
+  </script>
 </body>
 </html>

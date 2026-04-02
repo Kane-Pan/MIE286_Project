@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Participant Survey</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>Pre‑Experiment Questionnaire</h1>
+    <p>Please answer the following questions. Your answers help us interpret your results.</p>
+
+    <form id="survey-form">
+      <!-- Age -->
+      <div class="question-block">
+        <label for="age">1. What is your age?</label>
+        <input type="number" id="age" name="age" min="10" max="100" required>
+      </div>
+
+      <!-- Gender -->
+      <div class="question-block">
+        <label for="gender">2. What is your gender?</label>
+        <select id="gender" name="gender" required>
+          <option value="" disabled selected>Select...</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="non_binary">Non‑binary</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
+      </div>
+
+      <!-- Vision impairment -->
+      <div class="question-block">
+        <p>3. Do you have any visual impairments not corrected by glasses or contacts?</p>
+        <div class="survey-options">
+          <label><input type="radio" name="vision" value="no" required> No</label>
+          <label><input type="radio" name="vision" value="yes"> Yes</label>
+        </div>
+      </div>
+
+      <!-- Hearing impairment -->
+      <div class="question-block">
+        <p>4. Do you have any hearing impairments?</p>
+        <div class="survey-options">
+          <label><input type="radio" name="hearing" value="no" required> No</label>
+          <label><input type="radio" name="hearing" value="yes"> Yes</label>
+        </div>
+      </div>
+
+      <!-- Input device -->
+      <div class="question-block">
+        <p>5. What input device are you using?</p>
+        <div class="survey-options">
+          <label><input type="radio" name="input_device" value="mouse" required> Mouse</label>
+          <label><input type="radio" name="input_device" value="trackpad"> Trackpad / other</label>
+        </div>
+      </div>
+
+      <!-- Mouse familiarity -->
+      <div class="question-block">
+        <p>6. Rate your mouse familiarity (1 = very unfamiliar, 5 = very experienced):</p>
+        <div class="survey-options">
+          <label><input type="radio" name="mouse_familiarity" value="1" required> 1</label>
+          <label><input type="radio" name="mouse_familiarity" value="2"> 2</label>
+          <label><input type="radio" name="mouse_familiarity" value="3"> 3</label>
+          <label><input type="radio" name="mouse_familiarity" value="4"> 4</label>
+          <label><input type="radio" name="mouse_familiarity" value="5"> 5</label>
+        </div>
+      </div>
+
+      <!-- Gaming experience -->
+      <div class="question-block">
+        <p>7. How often do you play first‑person shooter or aim‑based video games?</p>
+        <div class="survey-options">
+          <label><input type="radio" name="gaming_experience" value="never" required> Never</label>
+          <label><input type="radio" name="gaming_experience" value="rarely"> Rarely</label>
+          <label><input type="radio" name="gaming_experience" value="occasionally"> Occasionally</label>
+          <label><input type="radio" name="gaming_experience" value="frequently"> Frequently</label>
+          <label><input type="radio" name="gaming_experience" value="very_frequently"> Very frequently</label>
+        </div>
+      </div>
+
+      <!-- Handedness -->
+      <div class="question-block">
+        <p>8. Which hand do you primarily use?</p>
+        <div class="survey-options">
+          <label><input type="radio" name="handedness" value="right" required> Right</label>
+          <label><input type="radio" name="handedness" value="left"> Left</label>
+          <label><input type="radio" name="handedness" value="ambidextrous"> Ambidextrous</label>
+        </div>
+      </div>
+
+      <!-- Screen size -->
+      <div class="question-block">
+        <label for="screen_size">9. What is your screen size in inches? (Optional)</label>
+        <input type="number" id="screen_size" name="screen_size" min="10" max="40" step="0.1">
+      </div>
+
+      <!-- Fatigue -->
+      <div class="question-block">
+        <p>10. How tired are you right now? (1 = not tired at all, 5 = extremely tired)</p>
+        <div class="survey-options">
+          <label><input type="radio" name="fatigue" value="1" required> 1</label>
+          <label><input type="radio" name="fatigue" value="2"> 2</label>
+          <label><input type="radio" name="fatigue" value="3"> 3</label>
+          <label><input type="radio" name="fatigue" value="4"> 4</label>
+          <label><input type="radio" name="fatigue" value="5"> 5</label>
+        </div>
+      </div>
+
+      <!-- Aim trainer experience -->
+      <div class="question-block">
+        <p>11. Have you used aim trainers (e.g. Aim Lab) before?</p>
+        <div class="survey-options">
+          <label><input type="radio" name="aim_training" value="no" required> No</label>
+          <label><input type="radio" name="aim_training" value="yes"> Yes</label>
+        </div>
+      </div>
+
+      <!-- Attention check -->
+      <div class="question-block">
+        <p>12. Attention check: please select option 3.</p>
+        <div class="survey-options">
+          <label><input type="radio" name="attention_check" value="1" required> 1</label>
+          <label><input type="radio" name="attention_check" value="2"> 2</label>
+          <label><input type="radio" name="attention_check" value="3"> 3</label>
+          <label><input type="radio" name="attention_check" value="4"> 4</label>
+          <label><input type="radio" name="attention_check" value="5"> 5</label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn">Submit and Continue</button>
+    </form>
+  </main>
+
+  <script src="survey.js"></script>
+</body>
+</html>

@@ -1,401 +1,320 @@
-(function() {
-    const params = new URLSearchParams(window.location.search);
-    const mode = params.get('mode') || 'practice';
-    const attempt = params.get('attempt') || 'practice';
+// game.js
+// Unified script to drive both the practice stage and the timed trials.
 
-    // DOM
+// This script handles two distinct pages:
+//  1. practice.html — unlimited practice with assigned feedback; provides a
+//     button to proceed to the timed trials.
+//  2. game.html — conducts three timed trials of 60 seconds each using
+//     predetermined target sequences (via a linear congruential generator).
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Verify that participant info and assigned mode exist
+  const firstName = sessionStorage.getItem('first_name');
+  const lastName = sessionStorage.getItem('last_name');
+  const assignedMode = sessionStorage.getItem('assigned_mode');
+  if (!firstName || !lastName || !assignedMode) {
+    // If missing information, return to start
+    window.location.href = 'index.html';
+    return;
+  }
+
+  // Determine if this is the practice page or the trial page by checking for
+  // special elements in the DOM
+  const practiceOverlay = document.getElementById('practice-overlay');
+  if (practiceOverlay) {
+    setupPracticePage();
+  } else {
+    setupTrialPage();
+  }
+
+  // ---------------------- Practice Page Logic -----------------------
+  function setupPracticePage() {
+    const beginBtn = document.getElementById('begin-practice-btn');
+    const resultOverlay = document.getElementById('result-overlay');
+    const startTrialsBtn = document.getElementById('start-trials-btn');
     const gameContainer = document.getElementById('game-container');
     const circle = document.getElementById('circle');
-    const startOverlay = document.getElementById('start-overlay');
-    const countdownEl = document.getElementById('countdown');
     const flashOverlay = document.getElementById('flash-overlay');
-    const resultOverlay = document.getElementById('result-overlay');
-    const resultText = document.getElementById('result-text');
-    const retryBtn = document.getElementById('retry-btn');
     const audioHit = document.getElementById('audio-hit');
     const audioMiss = document.getElementById('audio-miss');
 
-    // Pause UI
-    const pauseOverlay = document.getElementById('pause-overlay');
-    const pauseResumeBtn = document.getElementById('pause-resume');
-    const pauseRestartBtn = document.getElementById('pause-restart');
-    const pauseExitMenu = document.getElementById('pause-exit-menu');
-    const pauseStatus = document.getElementById('pause-status');
-
-    // Constants
-    const TRIAL_MS = 60000;
-    const RADIUS = 30;
-
-    // RNG setup
-    const seedMap = { '1': 12345, '2': 67890 };
-    const seedVal = seedMap[String(attempt)] || 1;
-
-    let randomFn = (mode !== 'practice') ? makeLCG(seedVal) : Math.random;
-
-    function makeLCG(seed) {
-        const m = 0x100000000; // 2^32
-        const a = 1664525;
-        const c = 1013904223;
-        let state = seed >>> 0;
-        return function() {
-            state = (a * state + c) % m;
-            return state / m;
-        };
-    }
-
-    function resetRNG() {
-        randomFn = (mode !== 'practice') ? makeLCG(seedVal) : Math.random;
-    }
-
-    // ---- State ----
-    let gameStarted = false;
-    let trialEnded = false;
-    let isPaused = false;
-
-    // Phase: allows pause during countdown
-    // "start" -> before click
-    // "countdown" -> 5..1
-    // "running" -> 60s trial active
-    // "ended" -> results
-    let phase = "start";
-
-    let countdownTimer = null;
-    let endTimer = null;
-
-    // Pausable countdown value
-    let countdownValue = 5;
-
-    // Pausable trial timing
-    let remainingMs = TRIAL_MS;
-    let resumePerf = 0;
-    let activeElapsedMs = 0;
-
-    // Score/data
-    let hits = 0;
-    let misses = 0;
-    let totalShots = 0;
-
+    // Game state
     let targetPos = { x: 0, y: 0 };
-    const events = [];
+    const RADIUS = 20; // radius in px (40px diameter)
+    const MARGIN = 100; // margin from edges (approx 1 inch)
 
-    // ---- Prevent pause menu clicks from bubbling into the game click handler ----
-    pauseOverlay.addEventListener('click', (e) => e.stopPropagation());
-
-    // Start overlay click
-    startOverlay.addEventListener('click', startGame);
-
-    function startGame() {
-        if (gameStarted) return;
-        gameStarted = true;
-        startOverlay.style.display = 'none';
-        trialEnded = false;
-        phase = "countdown";
-        countdownValue = 5;
-        runCountdownThenBegin();
+    // RNG: simple built‑in Math.random for practice
+    function randomPos() {
+      const containerW = gameContainer.clientWidth;
+      const containerH = gameContainer.clientHeight;
+      const rx = Math.random();
+      const ry = Math.random();
+      const px = rx * (containerW - 2 * (RADIUS + MARGIN)) + (RADIUS + MARGIN);
+      const py = ry * (containerH - 2 * (RADIUS + MARGIN)) + (RADIUS + MARGIN);
+      return { x: px, y: py };
     }
 
-    function runCountdownThenBegin() {
-        clearInterval(countdownTimer);
-
-        phase = "countdown";
-        countdownEl.style.display = 'block';
-        countdownEl.textContent = countdownValue;
-
-        countdownTimer = setInterval(() => {
-            if (isPaused) return; // safety
-
-            countdownValue -= 1;
-            if (countdownValue > 0) {
-                countdownEl.textContent = countdownValue;
-            } else {
-                clearInterval(countdownTimer);
-                countdownEl.style.display = 'none';
-                countdownValue = 5; // reset for next restart
-                beginTrialFresh();
-            }
-        }, 1000);
-    }
-
-    function beginTrialFresh() {
-        phase = "running";
-        trialEnded = false;
-        isPaused = false;
-
-        remainingMs = TRIAL_MS;
-        activeElapsedMs = 0;
-        resumePerf = performance.now();
-
-        hits = 0;
-        misses = 0;
-        totalShots = 0;
-        events.length = 0;
-
-        // hide overlays
-        resultOverlay.style.display = 'none';
-        hidePauseOverlay();
-
-        // spawn first target and start timer
-        spawnTarget();
-        scheduleEndTimer();
-    }
-
-    function scheduleEndTimer() {
-        clearTimeout(endTimer);
-        endTimer = setTimeout(endGame, remainingMs);
-    }
-
+    // Spawn a new target
     function spawnTarget() {
-        const containerW = gameContainer.clientWidth;
-        const containerH = gameContainer.clientHeight;
-
-        const rx = randomFn();
-        const ry = randomFn();
-
-        const px = rx * (containerW - 2 * RADIUS) + RADIUS;
-        const py = ry * (containerH - 2 * RADIUS) + RADIUS;
-
-        circle.style.left = (px - RADIUS) + 'px';
-        circle.style.top = (py - RADIUS) + 'px';
-        circle.style.display = 'block';
-
-        targetPos.x = px;
-        targetPos.y = py;
+      const pos = randomPos();
+      targetPos = pos;
+      circle.style.left = (pos.x - RADIUS) + 'px';
+      circle.style.top = (pos.y - RADIUS) + 'px';
+      circle.style.display = 'block';
     }
 
-    // Pause/resume that works during countdown AND running
-    function pauseGame() {
-        if (trialEnded || isPaused) return;
-        if (phase !== "countdown" && phase !== "running") return;
-
-        isPaused = true;
-
-        if (phase === "running") {
-            const now = performance.now();
-            const delta = now - resumePerf;
-            activeElapsedMs += delta;
-            remainingMs = Math.max(0, remainingMs - delta);
-            clearTimeout(endTimer);
-        } else if (phase === "countdown") {
-            clearInterval(countdownTimer);
-        }
-
-        showPauseOverlay();
-    }
-
-    function resumeGame() {
-        if (trialEnded || !isPaused) return;
-        if (phase !== "countdown" && phase !== "running") return;
-
-        isPaused = false;
-        hidePauseOverlay();
-
-        if (phase === "running") {
-            resumePerf = performance.now();
-            scheduleEndTimer();
-        } else if (phase === "countdown") {
-            // continue countdown from the current countdownValue
-            runCountdownThenBegin();
-        }
-    }
-
-    function togglePause() {
-        if (phase !== "countdown" && phase !== "running") return;
-        if (isPaused) resumeGame();
-        else pauseGame();
-    }
-
-    function restartGame() {
-        // Restart should always return to the countdown, not instantly start the trial.
-        clearTimeout(endTimer);
-        clearInterval(countdownTimer);
-
-        isPaused = false;
-        hidePauseOverlay();
-
-        // Reset RNG so attempt pattern repeats
-        resetRNG();
-
-        // Discard current run data
-        hits = 0; misses = 0; totalShots = 0;
-        events.length = 0;
-
-        // Reset timing
-        remainingMs = TRIAL_MS;
-        activeElapsedMs = 0;
-        resumePerf = 0;
-
-        // Hide target and results
-        circle.style.display = 'none';
-        resultOverlay.style.display = 'none';
-
-        // Restart countdown fresh
-        phase = "countdown";
-        trialEnded = false;
-        countdownValue = 5;
-        countdownEl.style.display = 'block';
-        countdownEl.textContent = countdownValue;
-
-        runCountdownThenBegin();
-    }
-
-    function exitToMenuDiscard() {
-        clearTimeout(endTimer);
-        clearInterval(countdownTimer);
-
-        // Discard events in memory; do NOT submit.
-        events.length = 0;
-
-        phase = "ended";
-        trialEnded = true;
-        isPaused = false;
-
-        window.location.href = "index.html";
-    }
-
-
-    // ESC key pause
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            e.preventDefault();
-            togglePause();
-        }
-    });
-
-    // Pause menu buttons
-    pauseResumeBtn.addEventListener('click', (e) => { e.stopPropagation(); resumeGame(); });
-    pauseRestartBtn.addEventListener('click', (e) => { e.stopPropagation(); restartGame(); });
-
-    pauseExitMenu.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        exitToMenuDiscard();
-    });
-
-    function showPauseOverlay() {
-        pauseStatus.textContent = "";
-        pauseOverlay.style.display = 'flex';
-    }
-
-    function hidePauseOverlay() {
-        pauseOverlay.style.display = 'none';
-    }
-
-    // Click handling
-    gameContainer.addEventListener('click', handleClick);
-
+    // Click handler for practice
     function handleClick(event) {
-        // Ignore clicks on UI overlays/buttons so they don't count as shots
-        if (event.target.closest('#pause-overlay, #result-overlay, #start-overlay')) return;
-
-        // Only count clicks during the running trial (not during countdown)
-        if (trialEnded || isPaused || phase !== "running") return;
-
-        const clickX = event.clientX;
-        const clickY = event.clientY;
-
-        // Elapsed active time excluding pauses
-        const now = performance.now();
-        const elapsedActiveMs = activeElapsedMs + (now - resumePerf);
-        const elapsed = (elapsedActiveMs / 1000);
-
-        const dx = clickX - targetPos.x;
-        const dy = clickY - targetPos.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        let status;
-        if (distance <= RADIUS) {
-            status = 'hit';
-            hits++;
-
-            if (mode === 'auditory') {
-                audioHit.currentTime = 0;
-                try { audioHit.play(); } catch (e) {}
-            } else if (mode === 'visual') {
-                flash('success');
-            }
-
-            spawnTarget();
-        } else {
-            status = 'miss';
-            misses++;
-
-            if (mode === 'auditory') {
-                audioMiss.currentTime = 0;
-                try { audioMiss.play(); } catch (e) {}
-            } else if (mode === 'visual') {
-                flash('error');
-            }
-            // keep same target on miss
+      // If click is outside the practice area, ignore
+      if (event.target.closest('#practice-overlay')) return;
+      if (!circle.style.display || circle.style.display === 'none') return;
+      const clickX = event.clientX;
+      const clickY = event.clientY;
+      const dx = clickX - targetPos.x;
+      const dy = clickY - targetPos.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist <= RADIUS) {
+        // hit
+        if (assignedMode === 'auditory') {
+          audioHit.currentTime = 0;
+          try { audioHit.play(); } catch (e) {}
+        } else if (assignedMode === 'visual') {
+          flash('success');
         }
-
-        totalShots++;
-
-        events.push({
-            time: elapsed.toFixed(3),
-            status: status,
-            target_x: targetPos.x.toFixed(1),
-            target_y: targetPos.y.toFixed(1),
-            click_x: clickX.toFixed(1),
-            click_y: clickY.toFixed(1)
-        });
+        spawnTarget();
+      } else {
+        if (assignedMode === 'auditory') {
+          audioMiss.currentTime = 0;
+          try { audioMiss.play(); } catch (e) {}
+        } else if (assignedMode === 'visual') {
+          flash('error');
+        }
+        // miss: keep same target
+      }
     }
 
     function flash(type) {
+      flashOverlay.classList.remove('success', 'error');
+      flashOverlay.style.display = 'block';
+      if (type === 'success') flashOverlay.classList.add('success');
+      else flashOverlay.classList.add('error');
+      setTimeout(() => {
+        flashOverlay.style.display = 'none';
         flashOverlay.classList.remove('success', 'error');
-        flashOverlay.style.display = 'block';
-
-        if (type === 'success') flashOverlay.classList.add('success');
-        else flashOverlay.classList.add('error');
-
-        setTimeout(() => {
-            flashOverlay.style.display = 'none';
-            flashOverlay.classList.remove('success', 'error');
-        }, 100);
+      }, 100);
     }
 
-    function endGame() {
-        if (trialEnded) return;
-
-        trialEnded = true;
-        phase = "ended";
-
-        // if ending while running (not paused), add the last active segment
-        if (!isPaused && phase !== "countdown") {
-            const now = performance.now();
-            const delta = now - resumePerf;
-            activeElapsedMs += delta;
-            remainingMs = Math.max(0, remainingMs - delta);
-        }
-
-        isPaused = false;
-        hidePauseOverlay();
-
-        clearTimeout(endTimer);
-        clearInterval(countdownTimer);
-
-        circle.style.display = 'none';
-
-        const accuracy = totalShots > 0 ? (hits / totalShots * 100).toFixed(1) : '0.0';
-        resultText.innerHTML = `Hits: ${hits}<br>Misses: ${misses}<br>Accuracy: ${accuracy}%`;
-        resultOverlay.style.display = 'flex';
-
-        sendResults();
-    }
-
-    function sendResults() {
-        const payload = { mode: mode, attempt: attempt, events: events };
-        fetch('/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        }).catch((err) => {
-            console.error('Failed to submit results', err);
-        });
-    }
-
-    retryBtn.addEventListener('click', function(ev) {
-        ev.preventDefault();
-        window.location.reload();
+    // Begin practice when user clicks button
+    beginBtn.addEventListener('click', function() {
+      practiceOverlay.style.display = 'none';
+      resultOverlay.classList.remove('hidden');
+      resultOverlay.style.display = 'flex';
+      // spawn first target
+      spawnTarget();
     });
 
-})();
+    // Start trials button navigates to first timed trial
+    startTrialsBtn.addEventListener('click', function() {
+      window.location.href = 'game.html?trial=1';
+    });
+
+    // Listen for clicks on the practice game container
+    gameContainer.addEventListener('click', handleClick);
+  }
+
+  // ---------------------- Trial Page Logic -------------------------
+  function setupTrialPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const trialNumber = parseInt(urlParams.get('trial')) || 1;
+    const gameContainer = document.getElementById('game-container');
+    const circle = document.getElementById('circle');
+    const flashOverlay = document.getElementById('flash-overlay');
+    const startOverlay = document.getElementById('start-overlay');
+    const countdownEl = document.getElementById('countdown');
+    const resultOverlay = document.getElementById('result-overlay');
+    const resultText = document.getElementById('result-text');
+    const audioHit = document.getElementById('audio-hit');
+    const audioMiss = document.getElementById('audio-miss');
+    const trialDisplay = document.getElementById('trial-number-display');
+    if (trialDisplay) trialDisplay.textContent = trialNumber;
+
+    const RADIUS = 20;
+    const MARGIN = 100;
+    const TRIAL_MS = 60000; // 60 seconds
+
+    // Seeds for each trial to generate deterministic sequences
+    const seedMap = { 1: 12345, 2: 67890, 3: 24680 };
+    const seedVal = seedMap[trialNumber] || 1;
+
+    // Linear congruential generator
+    function makeLCG(seed) {
+      const m = 0x100000000;
+      const a = 1664525;
+      const c = 1013904223;
+      let state = seed >>> 0;
+      return function() {
+        state = (a * state + c) % m;
+        return state / m;
+      };
+    }
+    const randomFn = makeLCG(seedVal);
+
+    // State
+    let trialStarted = false;
+    let trialEnded = false;
+    let countdownTimer = null;
+    let endTimer = null;
+    let targetPos = { x: 0, y: 0 };
+    let hits = 0;
+    let misses = 0;
+    let totalShots = 0;
+    let events = [];
+    let startTime = 0;
+
+    // Show start overlay click to begin
+    gameContainer.addEventListener('click', function handleStartClick() {
+      if (trialStarted) return;
+      trialStarted = true;
+      startOverlay.style.display = 'none';
+      // Start 3 second countdown
+      let count = 3;
+      countdownEl.textContent = count;
+      countdownEl.classList.remove('hidden');
+      countdownTimer = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countdownEl.textContent = count;
+        } else {
+          clearInterval(countdownTimer);
+          countdownEl.classList.add('hidden');
+          beginTrial();
+        }
+      }, 1000);
+      // Remove this listener so additional clicks don't restart
+      gameContainer.removeEventListener('click', handleStartClick);
+    });
+
+    function beginTrial() {
+      hits = 0;
+      misses = 0;
+      totalShots = 0;
+      events = [];
+      startTime = performance.now();
+      spawnTarget();
+      endTimer = setTimeout(endTrial, TRIAL_MS);
+    }
+
+    function spawnTarget() {
+      const containerW = gameContainer.clientWidth;
+      const containerH = gameContainer.clientHeight;
+      const rx = randomFn();
+      const ry = randomFn();
+      const px = rx * (containerW - 2 * (RADIUS + MARGIN)) + (RADIUS + MARGIN);
+      const py = ry * (containerH - 2 * (RADIUS + MARGIN)) + (RADIUS + MARGIN);
+      targetPos = { x: px, y: py };
+      circle.style.left = (px - RADIUS) + 'px';
+      circle.style.top = (py - RADIUS) + 'px';
+      circle.style.display = 'block';
+    }
+
+    function handleClick(event) {
+      if (!trialStarted || trialEnded) return;
+      // ignore clicks on overlay elements
+      if (event.target.closest('#result-overlay') || event.target.closest('#start-overlay')) return;
+      const clickX = event.clientX;
+      const clickY = event.clientY;
+      const dx = clickX - targetPos.x;
+      const dy = clickY - targetPos.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      // compute time relative to trial start
+      const clickTime = ((performance.now() - startTime) / 1000).toFixed(3);
+      let status;
+      if (distance <= RADIUS) {
+        status = 'hit';
+        hits++;
+        if (assignedMode === 'auditory') {
+          audioHit.currentTime = 0;
+          try { audioHit.play(); } catch (e) {}
+        } else if (assignedMode === 'visual') {
+          flash('success');
+        }
+        spawnTarget();
+      } else {
+        status = 'miss';
+        misses++;
+        if (assignedMode === 'auditory') {
+          audioMiss.currentTime = 0;
+          try { audioMiss.play(); } catch (e) {}
+        } else if (assignedMode === 'visual') {
+          flash('error');
+        }
+        // keep same target on miss
+      }
+      totalShots++;
+      events.push({
+        time: clickTime,
+        status: status,
+        target_x: targetPos.x.toFixed(1),
+        target_y: targetPos.y.toFixed(1),
+        click_x: clickX.toFixed(1),
+        click_y: clickY.toFixed(1)
+      });
+    }
+
+    function flash(type) {
+      flashOverlay.classList.remove('success', 'error');
+      flashOverlay.style.display = 'block';
+      if (type === 'success') flashOverlay.classList.add('success');
+      else flashOverlay.classList.add('error');
+      setTimeout(() => {
+        flashOverlay.style.display = 'none';
+        flashOverlay.classList.remove('success', 'error');
+      }, 100);
+    }
+
+    function endTrial() {
+      if (trialEnded) return;
+      trialEnded = true;
+      clearTimeout(endTimer);
+      circle.style.display = 'none';
+      const accuracy = totalShots > 0 ? (hits / totalShots * 100).toFixed(1) : '0.0';
+      if (resultOverlay) {
+        resultText.innerHTML = `Hits: ${hits}<br>Misses: ${misses}<br>Accuracy: ${accuracy}%`;
+        resultOverlay.classList.remove('hidden');
+        resultOverlay.style.display = 'flex';
+      }
+      sendResults().then(() => {
+        // Wait a few seconds, then proceed to next trial or survey
+        setTimeout(() => {
+          if (trialNumber < 3) {
+            window.location.href = `game.html?trial=${trialNumber + 1}`;
+          } else {
+            window.location.href = 'post_survey.html';
+          }
+        }, 3000);
+      });
+    }
+
+    async function sendResults() {
+      const payload = {
+        first_name: firstName,
+        last_name: lastName,
+        mode: assignedMode,
+        attempt: String(trialNumber),
+        events: events
+      };
+      try {
+        await fetch('/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.error('Failed to submit trial results', err);
+      }
+    }
+
+    // Event listeners
+    gameContainer.addEventListener('click', handleClick);
+  }
+});
