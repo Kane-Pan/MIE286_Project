@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function setupPracticePage() {
     const beginBtn = document.getElementById('begin-practice-btn');
-    const finishPracticeBtn = document.getElementById('finish-practice-btn');
+    const startTrialsBtn = document.getElementById('start-trials-btn');
     const gameContainer = document.getElementById('game-container');
     const circle = document.getElementById('circle');
     const flashOverlay = document.getElementById('flash-overlay');
@@ -75,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function handleClick(event) {
       if (!practiceStarted) return;
       if (event.target.closest('#practice-overlay')) return;
-      if (event.target.closest('#finish-practice-btn')) return;
       if (circle.style.display === 'none') return;
 
       const rect = gameContainer.getBoundingClientRect();
@@ -107,13 +106,12 @@ document.addEventListener('DOMContentLoaded', function () {
     beginBtn.addEventListener('click', function () {
       practiceStarted = true;
       if (practiceOverlayEl) {
-        practiceOverlayEl.style.display = 'none';
+        practiceOverlayEl.classList.add('hidden');
       }
-      finishPracticeBtn.disabled = false;
       spawnTarget();
     });
 
-    finishPracticeBtn.addEventListener('click', function () {
+    startTrialsBtn.addEventListener('click', function () {
       window.location.href = 'game.html?trial=1';
     });
 
@@ -171,7 +169,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (resultOverlay) {
       resultOverlay.classList.add('hidden');
-      resultOverlay.style.display = '';
     }
     if (countdownEl) {
       countdownEl.classList.add('hidden');
@@ -237,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       phase = 'countdown';
       if (startOverlay) {
-        startOverlay.style.display = 'none';
+        startOverlay.classList.add('hidden');
       }
 
       let count = 5;
