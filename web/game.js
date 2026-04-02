@@ -28,31 +28,47 @@ document.addEventListener('DOMContentLoaded', function () {
     let practiceStarted = false;
     let targetPos = { x: 0, y: 0 };
 
-    const RADIUS = 20;
-    const MARGIN = 100;
+    const SCALE = 1.25;
+    const BASE_RADIUS = 20;
+    const BASE_MARGIN = 100;
+    const RADIUS = Math.round(BASE_RADIUS * SCALE);   // 25
+    const MARGIN = Math.round(BASE_MARGIN * SCALE);   // 125
+    const MIN_PLAY_PADDING = Math.round(20 * SCALE);  // 25
 
-    function randomPos() {
+    circle.style.width = `${RADIUS * 2}px`;
+    circle.style.height = `${RADIUS * 2}px`;
+
+    function getUsableBounds() {
       const rect = gameContainer.getBoundingClientRect();
       const containerW = rect.width;
       const containerH = rect.height;
 
-      const usableW = Math.max(2 * RADIUS + 20, containerW - 2 * (RADIUS + MARGIN));
-      const usableH = Math.max(2 * RADIUS + 20, containerH - 2 * (RADIUS + MARGIN));
+      const usableW = Math.max(2 * RADIUS + MIN_PLAY_PADDING, containerW - 2 * (RADIUS + MARGIN));
+      const usableH = Math.max(2 * RADIUS + MIN_PLAY_PADDING, containerH - 2 * (RADIUS + MARGIN));
 
       const leftPad = (containerW - usableW) / 2;
       const topPad = (containerH - usableH) / 2;
 
-      const px = Math.random() * usableW + leftPad;
-      const py = Math.random() * usableH + topPad;
+      return {
+        usableW,
+        usableH,
+        leftPad,
+        topPad
+      };
+    }
 
+    function randomPos() {
+      const bounds = getUsableBounds();
+      const px = Math.random() * bounds.usableW + bounds.leftPad;
+      const py = Math.random() * bounds.usableH + bounds.topPad;
       return { x: px, y: py };
     }
 
     function spawnTarget() {
       const pos = randomPos();
       targetPos = pos;
-      circle.style.left = (pos.x - RADIUS) + 'px';
-      circle.style.top = (pos.y - RADIUS) + 'px';
+      circle.style.left = `${pos.x - RADIUS}px`;
+      circle.style.top = `${pos.y - RADIUS}px`;
       circle.style.display = 'block';
     }
 
@@ -137,9 +153,16 @@ document.addEventListener('DOMContentLoaded', function () {
       trialDisplay.textContent = trialNumber;
     }
 
-    const RADIUS = 20;
-    const MARGIN = 100;
+    const SCALE = 1.25;
+    const BASE_RADIUS = 20;
+    const BASE_MARGIN = 100;
+    const RADIUS = Math.round(BASE_RADIUS * SCALE);   // 25
+    const MARGIN = Math.round(BASE_MARGIN * SCALE);   // 125
+    const MIN_PLAY_PADDING = Math.round(20 * SCALE);  // 25
     const TRIAL_MS = 60000;
+
+    circle.style.width = `${RADIUS * 2}px`;
+    circle.style.height = `${RADIUS * 2}px`;
 
     const seedMap = { 1: 12345, 2: 67890, 3: 24680 };
     const seedVal = seedMap[trialNumber] || 1;
@@ -176,28 +199,37 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     circle.style.display = 'none';
 
-    function randomPos() {
+    function getUsableBounds() {
       const rect = gameContainer.getBoundingClientRect();
       const containerW = rect.width;
       const containerH = rect.height;
 
-      const usableW = Math.max(2 * RADIUS + 20, containerW - 2 * (RADIUS + MARGIN));
-      const usableH = Math.max(2 * RADIUS + 20, containerH - 2 * (RADIUS + MARGIN));
+      const usableW = Math.max(2 * RADIUS + MIN_PLAY_PADDING, containerW - 2 * (RADIUS + MARGIN));
+      const usableH = Math.max(2 * RADIUS + MIN_PLAY_PADDING, containerH - 2 * (RADIUS + MARGIN));
 
       const leftPad = (containerW - usableW) / 2;
       const topPad = (containerH - usableH) / 2;
 
-      const px = randomFn() * usableW + leftPad;
-      const py = randomFn() * usableH + topPad;
+      return {
+        usableW,
+        usableH,
+        leftPad,
+        topPad
+      };
+    }
 
+    function randomPos() {
+      const bounds = getUsableBounds();
+      const px = randomFn() * bounds.usableW + bounds.leftPad;
+      const py = randomFn() * bounds.usableH + bounds.topPad;
       return { x: px, y: py };
     }
 
     function spawnTarget() {
       const pos = randomPos();
       targetPos = pos;
-      circle.style.left = (pos.x - RADIUS) + 'px';
-      circle.style.top = (pos.y - RADIUS) + 'px';
+      circle.style.left = `${pos.x - RADIUS}px`;
+      circle.style.top = `${pos.y - RADIUS}px`;
       circle.style.display = 'block';
     }
 

@@ -3,48 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post‑Experiment Survey</title>
+  <title>Post-Experiment Survey</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main>
-    <h1>Post‑Experiment Questionnaire</h1>
-    <p>Thank you for completing the trials. Please answer a few final questions.</p>
+    <h1>Post-Experiment Questionnaire</h1>
+    <p>
+      Thank you for completing the trials. Please answer a few final questions
+      about the feedback you received during the task.
+    </p>
+
     <form id="post-survey-form">
-      <!-- Helpfulness -->
       <div class="question-block">
-        <p>1. Which type of feedback did you find more helpful for improving your performance?</p>
+        <p>1. The feedback I received was helpful for performing the task.</p>
         <div class="survey-options">
-          <label><input type="radio" name="helpful" value="auditory" required> Auditory</label>
-          <label><input type="radio" name="helpful" value="visual"> Visual</label>
-          <label><input type="radio" name="helpful" value="both"> Both equally</label>
-          <label><input type="radio" name="helpful" value="neither"> Neither</label>
+          <label><input type="radio" name="helpfulness" value="1" required> 1</label>
+          <label><input type="radio" name="helpfulness" value="2"> 2</label>
+          <label><input type="radio" name="helpfulness" value="3"> 3</label>
+          <label><input type="radio" name="helpfulness" value="4"> 4</label>
+          <label><input type="radio" name="helpfulness" value="5"> 5</label>
+          <label><input type="radio" name="helpfulness" value="6"> 6</label>
+          <label><input type="radio" name="helpfulness" value="7"> 7</label>
         </div>
+        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
-      <!-- Distracting -->
+
       <div class="question-block">
-        <p>2. Which type of feedback did you find more distracting?</p>
+        <p>2. The feedback was easy to interpret quickly.</p>
         <div class="survey-options">
-          <label><input type="radio" name="distracting" value="auditory" required> Auditory</label>
-          <label><input type="radio" name="distracting" value="visual"> Visual</label>
-          <label><input type="radio" name="distracting" value="both"> Both equally</label>
-          <label><input type="radio" name="distracting" value="none"> None</label>
+          <label><input type="radio" name="clarity" value="1" required> 1</label>
+          <label><input type="radio" name="clarity" value="2"> 2</label>
+          <label><input type="radio" name="clarity" value="3"> 3</label>
+          <label><input type="radio" name="clarity" value="4"> 4</label>
+          <label><input type="radio" name="clarity" value="5"> 5</label>
+          <label><input type="radio" name="clarity" value="6"> 6</label>
+          <label><input type="radio" name="clarity" value="7"> 7</label>
         </div>
+        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
-      <!-- Preference -->
+
       <div class="question-block">
-        <p>3. If you had a choice, which feedback would you prefer to use?</p>
+        <p>3. The feedback clearly told me whether I hit or missed the target.</p>
         <div class="survey-options">
-          <label><input type="radio" name="preference" value="auditory" required> Auditory</label>
-          <label><input type="radio" name="preference" value="visual"> Visual</label>
-          <label><input type="radio" name="preference" value="no_preference"> No preference</label>
+          <label><input type="radio" name="correctness_signal" value="1" required> 1</label>
+          <label><input type="radio" name="correctness_signal" value="2"> 2</label>
+          <label><input type="radio" name="correctness_signal" value="3"> 3</label>
+          <label><input type="radio" name="correctness_signal" value="4"> 4</label>
+          <label><input type="radio" name="correctness_signal" value="5"> 5</label>
+          <label><input type="radio" name="correctness_signal" value="6"> 6</label>
+          <label><input type="radio" name="correctness_signal" value="7"> 7</label>
         </div>
+        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
-      <!-- Comments -->
+
       <div class="question-block">
-        <label for="comments">4. Do you have any comments or suggestions about this experiment? (Optional)</label>
+        <p>4. The feedback was distracting while I was trying to aim and click.</p>
+        <div class="survey-options">
+          <label><input type="radio" name="distraction" value="1" required> 1</label>
+          <label><input type="radio" name="distraction" value="2"> 2</label>
+          <label><input type="radio" name="distraction" value="3"> 3</label>
+          <label><input type="radio" name="distraction" value="4"> 4</label>
+          <label><input type="radio" name="distraction" value="5"> 5</label>
+          <label><input type="radio" name="distraction" value="6"> 6</label>
+          <label><input type="radio" name="distraction" value="7"> 7</label>
+        </div>
+        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+      </div>
+
+      <div class="question-block">
+        <p>5. I felt confident in my performance during the trials.</p>
+        <div class="survey-options">
+          <label><input type="radio" name="confidence" value="1" required> 1</label>
+          <label><input type="radio" name="confidence" value="2"> 2</label>
+          <label><input type="radio" name="confidence" value="3"> 3</label>
+          <label><input type="radio" name="confidence" value="4"> 4</label>
+          <label><input type="radio" name="confidence" value="5"> 5</label>
+          <label><input type="radio" name="confidence" value="6"> 6</label>
+          <label><input type="radio" name="confidence" value="7"> 7</label>
+        </div>
+        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+      </div>
+
+      <div class="question-block">
+        <p>6. I would want to use this same type of feedback again in a similar task.</p>
+        <div class="survey-options">
+          <label><input type="radio" name="willingness_to_use_again" value="1" required> 1</label>
+          <label><input type="radio" name="willingness_to_use_again" value="2"> 2</label>
+          <label><input type="radio" name="willingness_to_use_again" value="3"> 3</label>
+          <label><input type="radio" name="willingness_to_use_again" value="4"> 4</label>
+          <label><input type="radio" name="willingness_to_use_again" value="5"> 5</label>
+          <label><input type="radio" name="willingness_to_use_again" value="6"> 6</label>
+          <label><input type="radio" name="willingness_to_use_again" value="7"> 7</label>
+        </div>
+        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+      </div>
+
+      <div class="question-block">
+        <p>7. The task felt mentally demanding.</p>
+        <div class="survey-options">
+          <label><input type="radio" name="mental_demand" value="1" required> 1</label>
+          <label><input type="radio" name="mental_demand" value="2"> 2</label>
+          <label><input type="radio" name="mental_demand" value="3"> 3</label>
+          <label><input type="radio" name="mental_demand" value="4"> 4</label>
+          <label><input type="radio" name="mental_demand" value="5"> 5</label>
+          <label><input type="radio" name="mental_demand" value="6"> 6</label>
+          <label><input type="radio" name="mental_demand" value="7"> 7</label>
+        </div>
+        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+      </div>
+
+      <div class="question-block">
+        <p>8. The task required a lot of effort.</p>
+        <div class="survey-options">
+          <label><input type="radio" name="effort" value="1" required> 1</label>
+          <label><input type="radio" name="effort" value="2"> 2</label>
+          <label><input type="radio" name="effort" value="3"> 3</label>
+          <label><input type="radio" name="effort" value="4"> 4</label>
+          <label><input type="radio" name="effort" value="5"> 5</label>
+          <label><input type="radio" name="effort" value="6"> 6</label>
+          <label><input type="radio" name="effort" value="7"> 7</label>
+        </div>
+        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+      </div>
+
+      <div class="question-block">
+        <p>9. I felt frustrated during the task.</p>
+        <div class="survey-options">
+          <label><input type="radio" name="frustration" value="1" required> 1</label>
+          <label><input type="radio" name="frustration" value="2"> 2</label>
+          <label><input type="radio" name="frustration" value="3"> 3</label>
+          <label><input type="radio" name="frustration" value="4"> 4</label>
+          <label><input type="radio" name="frustration" value="5"> 5</label>
+          <label><input type="radio" name="frustration" value="6"> 6</label>
+          <label><input type="radio" name="frustration" value="7"> 7</label>
+        </div>
+        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+      </div>
+
+      <div class="question-block">
+        <label for="comments">10. What did you like or dislike about the feedback you received? (Optional)</label>
         <textarea id="comments" name="comments" placeholder="Your feedback..."></textarea>
       </div>
+
       <button type="submit" class="btn">Submit Responses</button>
     </form>
   </main>
