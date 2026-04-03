@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const RADIUS = Math.round(BASE_RADIUS * SCALE);   // 25
     const MARGIN = Math.round(BASE_MARGIN * SCALE);   // 125
     const MIN_PLAY_PADDING = Math.round(20 * SCALE);  // 25
-    const TRIAL_MS = 60000;
+    const TRIAL_MS = 30000;
 
     circle.style.width = `${RADIUS * 2}px`;
     circle.style.height = `${RADIUS * 2}px`;
