@@ -5,8 +5,26 @@ document.addEventListener('DOMContentLoaded', function () {
   const firstName = sessionStorage.getItem('first_name');
   const lastName = sessionStorage.getItem('last_name');
   const assignedMode = sessionStorage.getItem('assigned_mode');
+  const language = sessionStorage.getItem('language') || 'en';
+
+  const TEXT = {
+    en: {
+      missingParticipantInfo: 'Missing participant information. Returning to the start page.',
+      submitFailed: 'Failed to submit your responses. Please try again.'
+    },
+    zh: {
+      missingParticipantInfo: '缺少参与者信息。正在返回开始页面。',
+      submitFailed: '提交回答失败，请重试。'
+    }
+  };
+
+  function t(key) {
+    const langPack = TEXT[language] || TEXT.en;
+    return langPack[key] || TEXT.en[key] || '';
+  }
 
   if (!firstName || !lastName) {
+    alert(t('missingParticipantInfo'));
     window.location.href = 'index.html';
     return;
   }
@@ -28,6 +46,9 @@ document.addEventListener('DOMContentLoaded', function () {
       responses.assigned_feedback_condition = assignedMode;
     }
 
+    // Save the selected interface language as well
+    responses.interface_language = language;
+
     const payload = {
       first_name: firstName,
       last_name: lastName,
@@ -44,6 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     } catch (err) {
       console.error('Failed to submit post survey', err);
+      alert(t('submitFailed'));
+      return;
     }
 
     window.location.href = 'thank_you.html';

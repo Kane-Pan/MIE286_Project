@@ -8,58 +8,60 @@
 </head>
 <body>
   <main>
-    <h1>Pre‑Experiment Questionnaire</h1>
-    <p>Please answer the following questions. Your answers help us interpret your results.</p>
+    <div class="form-group" style="max-width: 260px; margin-left: auto;">
+      <label for="languageSelect" id="languageLabel">Language / 语言：</label>
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
+
+    <h1 id="pageTitle">Pre-Experiment Questionnaire</h1>
+    <p id="pageIntro">Please answer the following questions. Your answers help us interpret your results.</p>
 
     <form id="survey-form">
-      <!-- Age -->
       <div class="question-block">
-        <label for="age">1. What is your age?</label>
+        <label for="age" id="q1Label">1. What is your age?</label>
         <input type="number" id="age" name="age" min="10" max="100" required>
       </div>
 
-      <!-- Gender -->
       <div class="question-block">
-        <label for="gender">2. What is your gender?</label>
+        <label for="gender" id="q2Label">2. What is your gender?</label>
         <select id="gender" name="gender" required>
-          <option value="" disabled selected>Select...</option>
-          <option value="female">Female</option>
-          <option value="male">Male</option>
-          <option value="non_binary">Non‑binary</option>
-          <option value="prefer_not_to_say">Prefer not to say</option>
+          <option value="" disabled selected id="genderPlaceholder">Select...</option>
+          <option value="female" id="genderFemale">Female</option>
+          <option value="male" id="genderMale">Male</option>
+          <option value="non_binary" id="genderNonBinary">Non-binary</option>
+          <option value="prefer_not_to_say" id="genderPreferNot">Prefer not to say</option>
         </select>
       </div>
 
-      <!-- Vision impairment -->
       <div class="question-block">
-        <p>3. Do you have any visual impairments not corrected by glasses or contacts?</p>
+        <p id="q3Label">3. Do you have any visual impairments not corrected by glasses or contacts?</p>
         <div class="survey-options">
-          <label><input type="radio" name="vision" value="no" required> No</label>
-          <label><input type="radio" name="vision" value="yes"> Yes</label>
+          <label><input type="radio" name="vision" value="no" required> <span id="visionNo">No</span></label>
+          <label><input type="radio" name="vision" value="yes"> <span id="visionYes">Yes</span></label>
         </div>
       </div>
 
-      <!-- Hearing impairment -->
       <div class="question-block">
-        <p>4. Do you have any hearing impairments?</p>
+        <p id="q4Label">4. Do you have any hearing impairments?</p>
         <div class="survey-options">
-          <label><input type="radio" name="hearing" value="no" required> No</label>
-          <label><input type="radio" name="hearing" value="yes"> Yes</label>
+          <label><input type="radio" name="hearing" value="no" required> <span id="hearingNo">No</span></label>
+          <label><input type="radio" name="hearing" value="yes"> <span id="hearingYes">Yes</span></label>
         </div>
       </div>
 
-      <!-- Input device -->
       <div class="question-block">
-        <p>5. What input device are you using?</p>
+        <p id="q5Label">5. What input device are you using?</p>
         <div class="survey-options">
-          <label><input type="radio" name="input_device" value="mouse" required> Mouse</label>
-          <label><input type="radio" name="input_device" value="trackpad"> Trackpad / other</label>
+          <label><input type="radio" name="input_device" value="mouse" required> <span id="deviceMouse">Mouse</span></label>
+          <label><input type="radio" name="input_device" value="trackpad"> <span id="deviceTrackpad">Trackpad / other</span></label>
         </div>
       </div>
 
-      <!-- Mouse familiarity -->
       <div class="question-block">
-        <p>6. Rate your mouse familiarity (1 = very unfamiliar, 5 = very experienced):</p>
+        <p id="q6Label">6. Rate your mouse familiarity (1 = very unfamiliar, 5 = very experienced):</p>
         <div class="survey-options">
           <label><input type="radio" name="mouse_familiarity" value="1" required> 1</label>
           <label><input type="radio" name="mouse_familiarity" value="2"> 2</label>
@@ -69,37 +71,33 @@
         </div>
       </div>
 
-      <!-- Gaming experience -->
       <div class="question-block">
-        <p>7. How often do you play first‑person shooter or aim‑based video games?</p>
+        <p id="q7Label">7. How often do you play first-person shooter or aim-based video games?</p>
         <div class="survey-options">
-          <label><input type="radio" name="gaming_experience" value="never" required> Never</label>
-          <label><input type="radio" name="gaming_experience" value="rarely"> Rarely</label>
-          <label><input type="radio" name="gaming_experience" value="occasionally"> Occasionally</label>
-          <label><input type="radio" name="gaming_experience" value="frequently"> Frequently</label>
-          <label><input type="radio" name="gaming_experience" value="very_frequently"> Very frequently</label>
+          <label><input type="radio" name="gaming_experience" value="never" required> <span id="gamingNever">Never</span></label>
+          <label><input type="radio" name="gaming_experience" value="rarely"> <span id="gamingRarely">Rarely</span></label>
+          <label><input type="radio" name="gaming_experience" value="occasionally"> <span id="gamingOccasionally">Occasionally</span></label>
+          <label><input type="radio" name="gaming_experience" value="frequently"> <span id="gamingFrequently">Frequently</span></label>
+          <label><input type="radio" name="gaming_experience" value="very_frequently"> <span id="gamingVeryFrequently">Very frequently</span></label>
         </div>
       </div>
 
-      <!-- Handedness -->
       <div class="question-block">
-        <p>8. Which hand do you primarily use?</p>
+        <p id="q8Label">8. Which hand do you primarily use?</p>
         <div class="survey-options">
-          <label><input type="radio" name="handedness" value="right" required> Right</label>
-          <label><input type="radio" name="handedness" value="left"> Left</label>
-          <label><input type="radio" name="handedness" value="ambidextrous"> Ambidextrous</label>
+          <label><input type="radio" name="handedness" value="right" required> <span id="handRight">Right</span></label>
+          <label><input type="radio" name="handedness" value="left"> <span id="handLeft">Left</span></label>
+          <label><input type="radio" name="handedness" value="ambidextrous"> <span id="handAmbi">Ambidextrous</span></label>
         </div>
       </div>
 
-      <!-- Screen size -->
       <div class="question-block">
-        <label for="screen_size">9. What is your screen size in inches? (Optional)</label>
+        <label for="screen_size" id="q9Label">9. What is your screen size in inches? (Optional)</label>
         <input type="number" id="screen_size" name="screen_size" min="10" max="40" step="0.1">
       </div>
 
-      <!-- Fatigue -->
       <div class="question-block">
-        <p>10. How tired are you right now? (1 = not tired at all, 5 = extremely tired)</p>
+        <p id="q10Label">10. How tired are you right now? (1 = not tired at all, 5 = extremely tired)</p>
         <div class="survey-options">
           <label><input type="radio" name="fatigue" value="1" required> 1</label>
           <label><input type="radio" name="fatigue" value="2"> 2</label>
@@ -109,18 +107,16 @@
         </div>
       </div>
 
-      <!-- Aim trainer experience -->
       <div class="question-block">
-        <p>11. Have you used aim trainers (e.g. Aim Lab) before?</p>
+        <p id="q11Label">11. Have you used aim trainers (e.g. Aim Lab) before?</p>
         <div class="survey-options">
-          <label><input type="radio" name="aim_training" value="no" required> No</label>
-          <label><input type="radio" name="aim_training" value="yes"> Yes</label>
+          <label><input type="radio" name="aim_training" value="no" required> <span id="aimNo">No</span></label>
+          <label><input type="radio" name="aim_training" value="yes"> <span id="aimYes">Yes</span></label>
         </div>
       </div>
 
-      <!-- Attention check -->
       <div class="question-block">
-        <p>12. Attention check: please select option 3.</p>
+        <p id="q12Label">12. Attention check: please select option 3.</p>
         <div class="survey-options">
           <label><input type="radio" name="attention_check" value="1" required> 1</label>
           <label><input type="radio" name="attention_check" value="2"> 2</label>
@@ -130,9 +126,155 @@
         </div>
       </div>
 
-      <button type="submit" class="btn">Submit and Continue</button>
+      <button type="submit" class="btn" id="submitBtn">Submit and Continue</button>
     </form>
   </main>
+
+  <script>
+    const TRANSLATIONS = {
+      en: {
+        languageLabel: "Language / 语言：",
+        pageTitle: "Pre-Experiment Questionnaire",
+        pageIntro: "Please answer the following questions. Your answers help us interpret your results.",
+        q1Label: "1. What is your age?",
+        q2Label: "2. What is your gender?",
+        genderPlaceholder: "Select...",
+        genderFemale: "Female",
+        genderMale: "Male",
+        genderNonBinary: "Non-binary",
+        genderPreferNot: "Prefer not to say",
+        q3Label: "3. Do you have any visual impairments not corrected by glasses or contacts?",
+        visionNo: "No",
+        visionYes: "Yes",
+        q4Label: "4. Do you have any hearing impairments?",
+        hearingNo: "No",
+        hearingYes: "Yes",
+        q5Label: "5. What input device are you using?",
+        deviceMouse: "Mouse",
+        deviceTrackpad: "Trackpad / other",
+        q6Label: "6. Rate your mouse familiarity (1 = very unfamiliar, 5 = very experienced):",
+        q7Label: "7. How often do you play first-person shooter or aim-based video games?",
+        gamingNever: "Never",
+        gamingRarely: "Rarely",
+        gamingOccasionally: "Occasionally",
+        gamingFrequently: "Frequently",
+        gamingVeryFrequently: "Very frequently",
+        q8Label: "8. Which hand do you primarily use?",
+        handRight: "Right",
+        handLeft: "Left",
+        handAmbi: "Ambidextrous",
+        q9Label: "9. What is your screen size in inches? (Optional)",
+        q10Label: "10. How tired are you right now? (1 = not tired at all, 5 = extremely tired)",
+        q11Label: "11. Have you used aim trainers (e.g. Aim Lab) before?",
+        aimNo: "No",
+        aimYes: "Yes",
+        q12Label: "12. Attention check: please select option 3.",
+        submitBtn: "Submit and Continue"
+      },
+      zh: {
+        languageLabel: "Language / 语言：",
+        pageTitle: "实验前问卷",
+        pageIntro: "请回答以下问题。你的答案将帮助我们更好地解释实验结果。",
+        q1Label: "1. 你的年龄是多少？",
+        q2Label: "2. 你的性别是？",
+        genderPlaceholder: "请选择……",
+        genderFemale: "女",
+        genderMale: "男",
+        genderNonBinary: "非二元性别",
+        genderPreferNot: "不愿透露",
+        q3Label: "3. 你是否有未被眼镜或隐形眼镜矫正的视力障碍？",
+        visionNo: "没有",
+        visionYes: "有",
+        q4Label: "4. 你是否有听力障碍？",
+        hearingNo: "没有",
+        hearingYes: "有",
+        q5Label: "5. 你正在使用什么输入设备？",
+        deviceMouse: "鼠标",
+        deviceTrackpad: "触控板 / 其他",
+        q6Label: "6. 请评价你对鼠标的熟悉程度（1 = 非常不熟悉，5 = 非常熟悉）：",
+        q7Label: "7. 你玩第一人称射击类或瞄准类电子游戏的频率如何？",
+        gamingNever: "从不",
+        gamingRarely: "很少",
+        gamingOccasionally: "偶尔",
+        gamingFrequently: "经常",
+        gamingVeryFrequently: "非常频繁",
+        q8Label: "8. 你主要使用哪只手？",
+        handRight: "右手",
+        handLeft: "左手",
+        handAmbi: "双手都可",
+        q9Label: "9. 你的屏幕尺寸大约是多少英寸？（可选）",
+        q10Label: "10. 你现在有多疲劳？（1 = 完全不累，5 = 非常疲劳）",
+        q11Label: "11. 你以前使用过瞄准训练器（例如 Aim Lab）吗？",
+        aimNo: "没有",
+        aimYes: "有",
+        q12Label: "12. 注意力检查：请选择选项 3。",
+        submitBtn: "提交并继续"
+      }
+    };
+
+    function applyLanguage(lang) {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+      document.documentElement.lang = lang === 'zh' ? 'zh' : 'en';
+
+      const ids = [
+        'languageLabel',
+        'pageTitle',
+        'pageIntro',
+        'q1Label',
+        'q2Label',
+        'genderPlaceholder',
+        'genderFemale',
+        'genderMale',
+        'genderNonBinary',
+        'genderPreferNot',
+        'q3Label',
+        'visionNo',
+        'visionYes',
+        'q4Label',
+        'hearingNo',
+        'hearingYes',
+        'q5Label',
+        'deviceMouse',
+        'deviceTrackpad',
+        'q6Label',
+        'q7Label',
+        'gamingNever',
+        'gamingRarely',
+        'gamingOccasionally',
+        'gamingFrequently',
+        'gamingVeryFrequently',
+        'q8Label',
+        'handRight',
+        'handLeft',
+        'handAmbi',
+        'q9Label',
+        'q10Label',
+        'q11Label',
+        'aimNo',
+        'aimYes',
+        'q12Label',
+        'submitBtn'
+      ];
+
+      ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el && t[id] !== undefined) {
+          el.textContent = t[id];
+        }
+      });
+    }
+
+    const languageSelect = document.getElementById('languageSelect');
+    const savedLanguage = sessionStorage.getItem('language') || 'en';
+    languageSelect.value = savedLanguage;
+    applyLanguage(savedLanguage);
+
+    languageSelect.addEventListener('change', function () {
+      const lang = this.value;
+      sessionStorage.setItem('language', lang);
+      applyLanguage(lang);
+    });
+  </script>
 
   <script src="survey.js"></script>
 </body>

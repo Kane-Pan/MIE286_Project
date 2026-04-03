@@ -8,11 +8,20 @@
 </head>
 <body>
   <main>
-    <h1>Practice Session</h1>
-    <p>
+    <div class="form-group" style="max-width: 260px; margin-left: auto;">
+      <label for="languageSelect" id="languageLabel">Language / 语言：</label>
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
+
+    <h1 id="pageTitle">Practice Session</h1>
+
+    <p id="practiceIntro">
       Practice clicking on the targets below. Targets will appear one at a time
       in random positions. Take as much time as you need to get familiar with
-      the controls. When you are ready, press <strong>Start Trials</strong>.
+      the controls. When you are ready, press Start Trials.
     </p>
 
     <div id="game-container" aria-label="Practice target area">
@@ -21,7 +30,7 @@
 
       <div id="practice-overlay">
         <div class="overlay-card">
-          <p>Click the button below when you’re ready to begin practicing.</p>
+          <p id="practiceOverlayText">Click the button below when you’re ready to begin practicing.</p>
           <button id="begin-practice-btn" class="btn" type="button">Begin Practice</button>
         </div>
       </div>
@@ -36,6 +45,51 @@
 
   <audio id="audio-hit" src="ding.wav"></audio>
   <audio id="audio-miss" src="buzz.wav"></audio>
+
+  <script>
+    const TRANSLATIONS = {
+      en: {
+        languageLabel: "Language / 语言：",
+        pageTitle: "Practice Session",
+        practiceIntro: "Practice clicking on the targets below. Targets will appear one at a time in random positions. Take as much time as you need to get familiar with the controls. When you are ready, press Start Trials.",
+        practiceOverlayText: "Click the button below when you’re ready to begin practicing.",
+        beginPracticeBtn: "Begin Practice",
+        startTrialsBtn: "Start Trials"
+      },
+      zh: {
+        languageLabel: "Language / 语言：",
+        pageTitle: "练习阶段",
+        practiceIntro: "请在下方练习点击目标。目标会一次出现一个，并随机出现在不同位置。你可以不限时间地熟悉操作。准备好后，请点击“开始正式测试”。",
+        practiceOverlayText: "准备好开始练习后，请点击下方按钮。",
+        beginPracticeBtn: "开始练习",
+        startTrialsBtn: "开始正式测试"
+      }
+    };
+
+    function applyLanguage(lang) {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+      document.documentElement.lang = lang === 'zh' ? 'zh' : 'en';
+
+      document.getElementById('languageLabel').textContent = t.languageLabel;
+      document.getElementById('pageTitle').textContent = t.pageTitle;
+      document.getElementById('practiceIntro').textContent = t.practiceIntro;
+      document.getElementById('practiceOverlayText').textContent = t.practiceOverlayText;
+      document.getElementById('begin-practice-btn').textContent = t.beginPracticeBtn;
+      document.getElementById('start-trials-btn').textContent = t.startTrialsBtn;
+    }
+
+    const languageSelect = document.getElementById('languageSelect');
+    const savedLanguage = sessionStorage.getItem('language') || 'en';
+    languageSelect.value = savedLanguage;
+    applyLanguage(savedLanguage);
+
+    languageSelect.addEventListener('change', function () {
+      const lang = this.value;
+      sessionStorage.setItem('language', lang);
+      applyLanguage(lang);
+    });
+  </script>
+
   <script src="game.js"></script>
 </body>
 </html>

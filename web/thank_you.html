@@ -8,9 +8,55 @@
 </head>
 <body>
   <main class="centered">
-    <h1>Thank You!</h1>
-    <p>Thank you for participating in our experiment. Your responses have been recorded.</p>
-    <p>You may now close this page.</p>
+    <div class="form-group" style="max-width: 260px; margin-left: auto; width: 100%;">
+      <label for="languageSelect" id="languageLabel">Language / 语言：</label>
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
+
+    <h1 id="pageTitle">Thank You!</h1>
+    <p id="thankYouText">Thank you for participating in our experiment. Your responses have been recorded.</p>
+    <p id="closeText">You may now close this page.</p>
   </main>
+
+  <script>
+    const TRANSLATIONS = {
+      en: {
+        languageLabel: "Language / 语言：",
+        pageTitle: "Thank You!",
+        thankYouText: "Thank you for participating in our experiment. Your responses have been recorded.",
+        closeText: "You may now close this page."
+      },
+      zh: {
+        languageLabel: "Language / 语言：",
+        pageTitle: "感谢参与！",
+        thankYouText: "感谢你参加本次实验。你的回答和结果已经被记录。",
+        closeText: "现在你可以关闭此页面。"
+      }
+    };
+
+    function applyLanguage(lang) {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+      document.documentElement.lang = lang === 'zh' ? 'zh' : 'en';
+
+      document.getElementById('languageLabel').textContent = t.languageLabel;
+      document.getElementById('pageTitle').textContent = t.pageTitle;
+      document.getElementById('thankYouText').textContent = t.thankYouText;
+      document.getElementById('closeText').textContent = t.closeText;
+    }
+
+    const languageSelect = document.getElementById('languageSelect');
+    const savedLanguage = sessionStorage.getItem('language') || 'en';
+    languageSelect.value = savedLanguage;
+    applyLanguage(savedLanguage);
+
+    languageSelect.addEventListener('change', function () {
+      const lang = this.value;
+      sessionStorage.setItem('language', lang);
+      applyLanguage(lang);
+    });
+  </script>
 </body>
 </html>

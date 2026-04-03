@@ -8,6 +8,28 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
+  const TEXT = {
+    en: {
+      hits: 'Hits',
+      misses: 'Misses',
+      accuracy: 'Accuracy'
+    },
+    zh: {
+      hits: '命中',
+      misses: '未命中',
+      accuracy: '准确率'
+    }
+  };
+
+  function getLanguage() {
+    const lang = sessionStorage.getItem('language') || 'en';
+    return TEXT[lang] ? lang : 'en';
+  }
+
+  function t(key) {
+    return TEXT[getLanguage()][key];
+  }
+
   const practiceOverlay = document.getElementById('practice-overlay');
   if (practiceOverlay) {
     setupPracticePage();
@@ -349,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const accuracy = totalShots > 0 ? (hits / totalShots * 100).toFixed(1) : '0.0';
 
       if (resultOverlay) {
-        resultText.innerHTML = `Hits: ${hits}<br>Misses: ${misses}<br>Accuracy: ${accuracy}%`;
+        resultText.innerHTML = `${t('hits')}: ${hits}<br>${t('misses')}: ${misses}<br>${t('accuracy')}: ${accuracy}%`;
         resultOverlay.classList.remove('hidden');
       }
 

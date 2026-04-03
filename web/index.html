@@ -8,8 +8,17 @@
 </head>
 <body>
   <main>
-    <h1>Welcome to the Aim Feedback Experiment</h1>
-    <p>
+    <div class="form-group" style="max-width: 260px; margin-left: auto;">
+      <label for="languageSelect" id="languageLabel">Language / 语言：</label>
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
+
+    <h1 id="pageTitle">Welcome to the Aim Feedback Experiment</h1>
+
+    <p id="introParagraph1">
       Thank you for volunteering for this study. You will complete a short
       reaction-time task where you click on targets that appear on the
       screen. The task involves different types of feedback (auditory or
@@ -17,49 +26,125 @@
       background questions, practice the task, complete three 30&nbsp;second
       trials, and finish with a brief questionnaire. The whole process should take less than 10 minutes.
     </p>
-    <p>
+
+    <p id="introParagraph2">
       Your responses and performance will be recorded anonymously. You may
       withdraw at any time without penalty. By checking the box below and
       entering your name, you indicate that you have read and understood the
       information and consent to participate.
-
+      <br><br>
       Note: This experiment may require auditory feedback. Please ensure you are in a quiet environment and have access to headphones or speakers.
     </p>
 
     <form id="consent-form">
       <div class="form-group">
-        <label for="firstName">First Name:</label>
+        <label for="firstName" id="firstNameLabel">First Name:</label>
         <input type="text" id="firstName" name="firstName" required>
       </div>
+
       <div class="form-group">
-        <label for="lastName">Last Name:</label>
+        <label for="lastName" id="lastNameLabel">Last Name:</label>
         <input type="text" id="lastName" name="lastName" required>
       </div>
+
       <div class="form-group">
         <label>
           <input type="checkbox" id="consentBox" required>
-          I have read the information above and consent to participate.
+          <span id="consentText">I have read the information above and consent to participate.</span>
         </label>
       </div>
-      <button type="submit" class="btn">Start Survey</button>
+
+      <button type="submit" class="btn" id="startSurveyBtn">Start Survey</button>
     </form>
   </main>
 
   <script>
-    // Handle consent form submission: store name and proceed to survey
+    const TRANSLATIONS = {
+      en: {
+        pageTitle: "Welcome to the Aim Feedback Experiment",
+        introParagraph1: `Thank you for volunteering for this study. You will complete a short
+reaction-time task where you click on targets that appear on the
+screen. The task involves different types of feedback (auditory or
+visual) that will be assigned randomly. You will first answer a few
+background questions, practice the task, complete three 30 second
+trials, and finish with a brief questionnaire. The whole process should take less than 10 minutes.`,
+        introParagraph2: `Your responses and performance will be recorded anonymously. You may
+withdraw at any time without penalty. By checking the box below and
+entering your name, you indicate that you have read and understood the
+information and consent to participate.
+
+Note: This experiment may require auditory feedback. Please ensure you are in a quiet environment and have access to headphones or speakers.`,
+        firstNameLabel: "First Name:",
+        lastNameLabel: "Last Name:",
+        consentText: "I have read the information above and consent to participate.",
+        startSurveyBtn: "Start Survey",
+        alertText: "Please enter your name and provide consent to continue.",
+        firstNamePlaceholder: "First name",
+        lastNamePlaceholder: "Last name",
+        languageLabel: "Language / 语言："
+      },
+      zh: {
+        pageTitle: "欢迎参加瞄准反馈实验",
+        introParagraph1: `感谢你参加本次研究。你将完成一个简短的反应时间任务，在屏幕上点击出现的目标。任务中会随机分配不同类型的反馈（听觉或视觉）。你将先回答一些背景问题，接着进行练习，然后完成三次 30 秒的正式测试，最后填写一份简短问卷。整个过程预计少于 10 分钟。`,
+        introParagraph2: `你的回答和表现数据将以匿名方式记录。你可以在任何时候退出，且不会受到任何惩罚。勾选下方选框并填写姓名，即表示你已阅读并理解上述信息，并同意参与本实验。
+
+注意：本实验可能包含听觉反馈。请确保你处于安静环境中，并可使用耳机或扬声器。`,
+        firstNameLabel: "名字：",
+        lastNameLabel: "姓氏：",
+        consentText: "我已阅读以上信息，并同意参加本实验。",
+        startSurveyBtn: "开始问卷",
+        alertText: "请输入姓名并勾选同意后继续。",
+        firstNamePlaceholder: "名字",
+        lastNamePlaceholder: "姓氏",
+        languageLabel: "Language / 语言："
+      }
+    };
+
+    function applyLanguage(lang) {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+      document.documentElement.lang = lang === 'zh' ? 'zh' : 'en';
+
+      document.getElementById('pageTitle').textContent = t.pageTitle;
+      document.getElementById('introParagraph1').textContent = t.introParagraph1;
+      document.getElementById('introParagraph2').textContent = t.introParagraph2;
+      document.getElementById('firstNameLabel').textContent = t.firstNameLabel;
+      document.getElementById('lastNameLabel').textContent = t.lastNameLabel;
+      document.getElementById('consentText').textContent = t.consentText;
+      document.getElementById('startSurveyBtn').textContent = t.startSurveyBtn;
+      document.getElementById('languageLabel').textContent = t.languageLabel;
+
+      document.getElementById('firstName').placeholder = t.firstNamePlaceholder;
+      document.getElementById('lastName').placeholder = t.lastNamePlaceholder;
+    }
+
+    const languageSelect = document.getElementById('languageSelect');
+    const savedLanguage = sessionStorage.getItem('language') || 'en';
+    languageSelect.value = savedLanguage;
+    applyLanguage(savedLanguage);
+
+    languageSelect.addEventListener('change', function () {
+      const lang = this.value;
+      sessionStorage.setItem('language', lang);
+      applyLanguage(lang);
+    });
+
     document.getElementById('consent-form').addEventListener('submit', function(ev) {
       ev.preventDefault();
+
       const firstName = document.getElementById('firstName').value.trim();
       const lastName = document.getElementById('lastName').value.trim();
       const consent = document.getElementById('consentBox').checked;
+      const lang = sessionStorage.getItem('language') || 'en';
+
       if (!firstName || !lastName || !consent) {
-        alert('Please enter your name and provide consent to continue.');
+        alert(TRANSLATIONS[lang].alertText);
         return;
       }
-      // Store participant info in sessionStorage
+
       sessionStorage.setItem('first_name', firstName);
       sessionStorage.setItem('last_name', lastName);
-      // Navigate to survey page
+
       window.location.href = 'survey.html';
     });
   </script>

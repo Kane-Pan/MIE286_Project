@@ -8,15 +8,23 @@
 </head>
 <body>
   <main>
-    <h1>Post-Experiment Questionnaire</h1>
-    <p>
+    <div class="form-group" style="max-width: 260px; margin-left: auto;">
+      <label for="languageSelect" id="languageLabel">Language / 语言：</label>
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
+
+    <h1 id="pageTitle">Post-Experiment Questionnaire</h1>
+    <p id="pageIntro">
       Thank you for completing the trials. Please answer a few final questions
       about the feedback you received during the task.
     </p>
 
     <form id="post-survey-form">
       <div class="question-block">
-        <p>1. The feedback I received was helpful for performing the task.</p>
+        <p id="q1Label">1. The feedback I received was helpful for performing the task.</p>
         <div class="survey-options">
           <label><input type="radio" name="helpfulness" value="1" required> 1</label>
           <label><input type="radio" name="helpfulness" value="2"> 2</label>
@@ -26,11 +34,11 @@
           <label><input type="radio" name="helpfulness" value="6"> 6</label>
           <label><input type="radio" name="helpfulness" value="7"> 7</label>
         </div>
-        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+        <p><small id="scaleText1">1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
 
       <div class="question-block">
-        <p>2. The feedback was easy to interpret quickly.</p>
+        <p id="q2Label">2. The feedback was easy to interpret quickly.</p>
         <div class="survey-options">
           <label><input type="radio" name="clarity" value="1" required> 1</label>
           <label><input type="radio" name="clarity" value="2"> 2</label>
@@ -40,11 +48,11 @@
           <label><input type="radio" name="clarity" value="6"> 6</label>
           <label><input type="radio" name="clarity" value="7"> 7</label>
         </div>
-        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+        <p><small id="scaleText2">1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
 
       <div class="question-block">
-        <p>3. The feedback clearly told me whether I hit or missed the target.</p>
+        <p id="q3Label">3. The feedback clearly told me whether I hit or missed the target.</p>
         <div class="survey-options">
           <label><input type="radio" name="correctness_signal" value="1" required> 1</label>
           <label><input type="radio" name="correctness_signal" value="2"> 2</label>
@@ -54,11 +62,11 @@
           <label><input type="radio" name="correctness_signal" value="6"> 6</label>
           <label><input type="radio" name="correctness_signal" value="7"> 7</label>
         </div>
-        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+        <p><small id="scaleText3">1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
 
       <div class="question-block">
-        <p>4. The feedback was distracting while I was trying to aim and click.</p>
+        <p id="q4Label">4. The feedback was distracting while I was trying to aim and click.</p>
         <div class="survey-options">
           <label><input type="radio" name="distraction" value="1" required> 1</label>
           <label><input type="radio" name="distraction" value="2"> 2</label>
@@ -68,11 +76,11 @@
           <label><input type="radio" name="distraction" value="6"> 6</label>
           <label><input type="radio" name="distraction" value="7"> 7</label>
         </div>
-        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+        <p><small id="scaleText4">1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
 
       <div class="question-block">
-        <p>5. I felt confident in my performance during the trials.</p>
+        <p id="q5Label">5. I felt confident in my performance during the trials.</p>
         <div class="survey-options">
           <label><input type="radio" name="confidence" value="1" required> 1</label>
           <label><input type="radio" name="confidence" value="2"> 2</label>
@@ -82,11 +90,11 @@
           <label><input type="radio" name="confidence" value="6"> 6</label>
           <label><input type="radio" name="confidence" value="7"> 7</label>
         </div>
-        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+        <p><small id="scaleText5">1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
 
       <div class="question-block">
-        <p>6. I would want to use this same type of feedback again in a similar task.</p>
+        <p id="q6Label">6. I would want to use this same type of feedback again in a similar task.</p>
         <div class="survey-options">
           <label><input type="radio" name="willingness_to_use_again" value="1" required> 1</label>
           <label><input type="radio" name="willingness_to_use_again" value="2"> 2</label>
@@ -96,11 +104,11 @@
           <label><input type="radio" name="willingness_to_use_again" value="6"> 6</label>
           <label><input type="radio" name="willingness_to_use_again" value="7"> 7</label>
         </div>
-        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+        <p><small id="scaleText6">1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
 
       <div class="question-block">
-        <p>7. The task felt mentally demanding.</p>
+        <p id="q7Label">7. The task felt mentally demanding.</p>
         <div class="survey-options">
           <label><input type="radio" name="mental_demand" value="1" required> 1</label>
           <label><input type="radio" name="mental_demand" value="2"> 2</label>
@@ -110,11 +118,11 @@
           <label><input type="radio" name="mental_demand" value="6"> 6</label>
           <label><input type="radio" name="mental_demand" value="7"> 7</label>
         </div>
-        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+        <p><small id="scaleText7">1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
 
       <div class="question-block">
-        <p>8. The task required a lot of effort.</p>
+        <p id="q8Label">8. The task required a lot of effort.</p>
         <div class="survey-options">
           <label><input type="radio" name="effort" value="1" required> 1</label>
           <label><input type="radio" name="effort" value="2"> 2</label>
@@ -124,11 +132,11 @@
           <label><input type="radio" name="effort" value="6"> 6</label>
           <label><input type="radio" name="effort" value="7"> 7</label>
         </div>
-        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+        <p><small id="scaleText8">1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
 
       <div class="question-block">
-        <p>9. I felt frustrated during the task.</p>
+        <p id="q9Label">9. I felt frustrated during the task.</p>
         <div class="survey-options">
           <label><input type="radio" name="frustration" value="1" required> 1</label>
           <label><input type="radio" name="frustration" value="2"> 2</label>
@@ -138,17 +146,100 @@
           <label><input type="radio" name="frustration" value="6"> 6</label>
           <label><input type="radio" name="frustration" value="7"> 7</label>
         </div>
-        <p><small>1 = Strongly disagree, 7 = Strongly agree</small></p>
+        <p><small id="scaleText9">1 = Strongly disagree, 7 = Strongly agree</small></p>
       </div>
 
       <div class="question-block">
-        <label for="comments">10. What did you like or dislike about the feedback you received? (Optional)</label>
+        <label for="comments" id="q10Label">10. What did you like or dislike about the feedback you received? (Optional)</label>
         <textarea id="comments" name="comments" placeholder="Your feedback..."></textarea>
       </div>
 
-      <button type="submit" class="btn">Submit Responses</button>
+      <button type="submit" class="btn" id="submitBtn">Submit Responses</button>
     </form>
   </main>
+
+  <script>
+    const TRANSLATIONS = {
+      en: {
+        languageLabel: "Language / 语言：",
+        pageTitle: "Post-Experiment Questionnaire",
+        pageIntro: "Thank you for completing the trials. Please answer a few final questions about the feedback you received during the task.",
+        q1Label: "1. The feedback I received was helpful for performing the task.",
+        q2Label: "2. The feedback was easy to interpret quickly.",
+        q3Label: "3. The feedback clearly told me whether I hit or missed the target.",
+        q4Label: "4. The feedback was distracting while I was trying to aim and click.",
+        q5Label: "5. I felt confident in my performance during the trials.",
+        q6Label: "6. I would want to use this same type of feedback again in a similar task.",
+        q7Label: "7. The task felt mentally demanding.",
+        q8Label: "8. The task required a lot of effort.",
+        q9Label: "9. I felt frustrated during the task.",
+        q10Label: "10. What did you like or dislike about the feedback you received? (Optional)",
+        scaleText: "1 = Strongly disagree, 7 = Strongly agree",
+        commentsPlaceholder: "Your feedback...",
+        submitBtn: "Submit Responses"
+      },
+      zh: {
+        languageLabel: "Language / 语言：",
+        pageTitle: "实验后问卷",
+        pageIntro: "感谢你完成测试。请根据你在任务中收到的反馈，回答以下几个最后的问题。",
+        q1Label: "1. 我收到的反馈对完成任务有帮助。",
+        q2Label: "2. 这些反馈能够被我快速理解。",
+        q3Label: "3. 这些反馈能够清楚地告诉我是否击中了目标。",
+        q4Label: "4. 当我瞄准并点击时，这些反馈会让我分心。",
+        q5Label: "5. 在测试过程中，我对自己的表现感到有信心。",
+        q6Label: "6. 如果进行类似任务，我愿意再次使用这种反馈。",
+        q7Label: "7. 这个任务在心理上让我感到有负担。",
+        q8Label: "8. 这个任务需要我付出很多努力。",
+        q9Label: "9. 在任务过程中我感到沮丧。",
+        q10Label: "10. 你喜欢或不喜欢你所收到的反馈的哪些方面？（可选）",
+        scaleText: "1 = 非常不同意，7 = 非常同意",
+        commentsPlaceholder: "请输入你的反馈……",
+        submitBtn: "提交回答"
+      }
+    };
+
+    function applyLanguage(lang) {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+      document.documentElement.lang = lang === 'zh' ? 'zh' : 'en';
+
+      document.getElementById('languageLabel').textContent = t.languageLabel;
+      document.getElementById('pageTitle').textContent = t.pageTitle;
+      document.getElementById('pageIntro').textContent = t.pageIntro;
+      document.getElementById('q1Label').textContent = t.q1Label;
+      document.getElementById('q2Label').textContent = t.q2Label;
+      document.getElementById('q3Label').textContent = t.q3Label;
+      document.getElementById('q4Label').textContent = t.q4Label;
+      document.getElementById('q5Label').textContent = t.q5Label;
+      document.getElementById('q6Label').textContent = t.q6Label;
+      document.getElementById('q7Label').textContent = t.q7Label;
+      document.getElementById('q8Label').textContent = t.q8Label;
+      document.getElementById('q9Label').textContent = t.q9Label;
+      document.getElementById('q10Label').textContent = t.q10Label;
+      document.getElementById('scaleText1').textContent = t.scaleText;
+      document.getElementById('scaleText2').textContent = t.scaleText;
+      document.getElementById('scaleText3').textContent = t.scaleText;
+      document.getElementById('scaleText4').textContent = t.scaleText;
+      document.getElementById('scaleText5').textContent = t.scaleText;
+      document.getElementById('scaleText6').textContent = t.scaleText;
+      document.getElementById('scaleText7').textContent = t.scaleText;
+      document.getElementById('scaleText8').textContent = t.scaleText;
+      document.getElementById('scaleText9').textContent = t.scaleText;
+      document.getElementById('comments').placeholder = t.commentsPlaceholder;
+      document.getElementById('submitBtn').textContent = t.submitBtn;
+    }
+
+    const languageSelect = document.getElementById('languageSelect');
+    const savedLanguage = sessionStorage.getItem('language') || 'en';
+    languageSelect.value = savedLanguage;
+    applyLanguage(savedLanguage);
+
+    languageSelect.addEventListener('change', function () {
+      const lang = this.value;
+      sessionStorage.setItem('language', lang);
+      applyLanguage(lang);
+    });
+  </script>
+
   <script src="post_survey.js"></script>
 </body>
 </html>

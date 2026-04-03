@@ -8,25 +8,101 @@
 </head>
 <body>
   <main>
-    <h1>Timed Trial</h1>
-    <p id="trial-instructions">Complete each 30‑second trial by clicking on the
-      targets that appear. Your feedback type is assigned randomly.
+    <div class="form-group" style="max-width: 260px; margin-left: auto;">
+      <label for="languageSelect" id="languageLabel">Language / 语言：</label>
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+      </select>
+    </div>
+
+    <h1 id="pageTitle">Timed Trial</h1>
+
+    <p id="trial-instructions">
+      Complete each 30-second trial by clicking on the targets that appear.
+      Your feedback type is assigned randomly.
     </p>
+
     <div id="game-container">
       <div id="circle" style="display:none;"></div>
       <div id="flash-overlay"></div>
+
       <div id="start-overlay">
-        <p>Click anywhere inside the box to begin Trial <span id="trial-number-display"></span>.</p>
+        <p id="startOverlayText">
+          Click anywhere inside the box to begin Trial
+          <span id="trial-number-display"></span>.
+        </p>
       </div>
+
       <div id="countdown" class="hidden"></div>
+
       <div id="result-overlay" class="hidden">
-        <h2>Trial Complete</h2>
+        <h2 id="resultTitle">Trial Complete</h2>
         <p id="result-text"></p>
       </div>
     </div>
   </main>
+
   <audio id="audio-hit" src="ding.wav"></audio>
   <audio id="audio-miss" src="buzz.wav"></audio>
+
+  <script>
+    const TRANSLATIONS = {
+      en: {
+        languageLabel: "Language / 语言：",
+        pageTitle: "Timed Trial",
+        trialInstructions: "Complete each 30-second trial by clicking on the targets that appear. Your feedback type is assigned randomly.",
+        startPrefix: "Click anywhere inside the box to begin Trial",
+        startSuffix: ".",
+        resultTitle: "Trial Complete"
+      },
+      zh: {
+        languageLabel: "Language / 语言：",
+        pageTitle: "正式测试",
+        trialInstructions: "请在每次 30 秒的测试中点击出现的目标。你的反馈类型将被随机分配。",
+        startPrefix: "点击白色区域内任意位置开始第",
+        startSuffix: "轮测试。",
+        resultTitle: "本轮测试完成"
+      }
+    };
+
+    function applyLanguage(lang) {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+      document.documentElement.lang = lang === 'zh' ? 'zh' : 'en';
+
+      document.getElementById('languageLabel').textContent = t.languageLabel;
+      document.getElementById('pageTitle').textContent = t.pageTitle;
+      document.getElementById('trial-instructions').textContent = t.trialInstructions;
+      document.getElementById('resultTitle').textContent = t.resultTitle;
+
+      const trialNumberEl = document.getElementById('trial-number-display');
+      const trialNum = trialNumberEl ? trialNumberEl.textContent : '';
+      document.getElementById('startOverlayText').innerHTML =
+        `${t.startPrefix} <span id="trial-number-display">${trialNum}</span>${t.startSuffix}`;
+    }
+
+    const languageSelect = document.getElementById('languageSelect');
+    const savedLanguage = sessionStorage.getItem('language') || 'en';
+    languageSelect.value = savedLanguage;
+    applyLanguage(savedLanguage);
+
+    languageSelect.addEventListener('change', function () {
+      const lang = this.value;
+      sessionStorage.setItem('language', lang);
+      applyLanguage(lang);
+    });
+
+    const observer = new MutationObserver(() => {
+      const lang = sessionStorage.getItem('language') || 'en';
+      applyLanguage(lang);
+    });
+
+    const trialDisplay = document.getElementById('trial-number-display');
+    if (trialDisplay) {
+      observer.observe(trialDisplay, { childList: true, subtree: true, characterData: true });
+    }
+  </script>
+
   <script src="game.js"></script>
 </body>
 </html>
