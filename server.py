@@ -1,3 +1,15 @@
+"""
+railway whoami
+cd "D:\University\MIE Project"
+railway link
+railway ssh
+cd /data/results
+ls -1
+"""
+
+
+
+
 import http.server
 import json
 import os
@@ -21,26 +33,6 @@ class ResultSavingRequestHandler(http.server.SimpleHTTPRequestHandler):
     """
     Custom request handler that serves static files from the `web` directory
     and persists results and survey responses to CSV files.
-
-    The server expects POST requests to the `/submit` endpoint containing JSON
-    with the following keys:
-
-    - `first_name`: participant's first name
-    - `last_name`: participant's last name
-    - `mode`: one of 'auditory', 'visual', 'pre_survey', 'post_survey'
-    - `attempt`: for game results this is '1', '2', or '3'; for surveys it can
-      be any identifier (e.g. 'pre', 'post')
-    - For game results: `events`: a list of dictionaries describing each shot
-    - For surveys: `responses`: a dict mapping question keys to answers
-
-    Filenames are constructed as follows:
-      <FirstName><LastName>_<mode>_trial<attempt>.csv    for game results
-      <FirstName><LastName>_pre_survey.csv               for the pre-survey
-      <FirstName><LastName>_post_survey.csv              for the post-survey
-
-    All CSV files are written into a results directory.  If the environment
-    variable RESULTS_DIR is set, it will be used as the base directory;
-    otherwise a local `results` folder alongside this file will be used.
     """
 
     # Serve static files from the `web` directory relative to this file.
@@ -54,6 +46,31 @@ class ResultSavingRequestHandler(http.server.SimpleHTTPRequestHandler):
         if rel == "":
             rel = "index.html"
         return str(self.web_dir / rel)
+    
+    def do_GET(self):
+        parsed = urlparse(self.path)
+
+        if parsed.path == "/download-results":
+            file_path = pathlib.Path("/data/results.tar.gz")
+
+            if not file_path.exists():
+                self.send_error(404, "results.tar.gz not found")
+                return
+
+            try:
+                self.send_response(200)
+                self.send_header("Content-Type", "application/gzip")
+                self.send_header("Content-Disposition", 'attachment; filename="results.tar.gz"')
+                self.send_header("Content-Length", str(file_path.stat().st_size))
+                self.end_headers()
+
+                with file_path.open("rb") as f:
+                    self.wfile.write(f.read())
+            except OSError:
+                self.send_error(500, "Internal Server Error: unable to read archive")
+            return
+
+        return super().do_GET()
 
     def do_POST(self):
         parsed = urlparse(self.path)
