@@ -1,15 +1,3 @@
-"""
-railway whoami
-cd "D:\University\MIE Project"
-railway link
-railway ssh
-cd /data/results
-ls -1
-"""
-
-
-
-
 import http.server
 import json
 import os
